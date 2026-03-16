@@ -1,0 +1,1906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#1a2332">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>The Mole Clinic — Free Skin Check</title>
+<link rel="manifest" href="manifest.json">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300;1,9..40,400&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,300;1,9..144,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --tmc-navy: #1a2332;
+  --tmc-navy-light: #243044;
+  --tmc-teal: #2ec4b6;
+  --tmc-teal-dark: #20a99c;
+  --tmc-teal-light: #e8faf8;
+  --tmc-coral: #e07a5f;
+  --tmc-coral-light: #fdf0ec;
+  --tmc-gold: #f2cc8f;
+  --tmc-cream: #faf8f5;
+  --tmc-white: #ffffff;
+  --tmc-gray-100: #f5f5f5;
+  --tmc-gray-200: #e8e8e8;
+  --tmc-gray-300: #d1d1d1;
+  --tmc-gray-400: #9a9a9a;
+  --tmc-gray-600: #666666;
+  --tmc-gray-800: #333333;
+  --tmc-red: #dc3545;
+  --tmc-green: #28a745;
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-body: 'DM Sans', -apple-system, sans-serif;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.1);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.12);
+  --shadow-xl: 0 16px 48px rgba(0,0,0,0.16);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  font-family: var(--font-body);
+  background: var(--tmc-cream);
+  color: var(--tmc-gray-800);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+body { padding-bottom: env(safe-area-inset-bottom); }
+
+#app { min-height: 100vh; }
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(40px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-40px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+@keyframes breathe {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(46, 196, 182, 0.3); }
+  50% { box-shadow: 0 0 0 12px rgba(46, 196, 182, 0); }
+}
+@keyframes checkmark {
+  0% { stroke-dashoffset: 24; }
+  100% { stroke-dashoffset: 0; }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.animate-in { animation: fadeInUp 0.5s ease-out forwards; }
+.animate-in-delay-1 { animation: fadeInUp 0.5s ease-out 0.1s forwards; opacity: 0; }
+.animate-in-delay-2 { animation: fadeInUp 0.5s ease-out 0.2s forwards; opacity: 0; }
+.animate-in-delay-3 { animation: fadeInUp 0.5s ease-out 0.3s forwards; opacity: 0; }
+.animate-in-delay-4 { animation: fadeInUp 0.5s ease-out 0.4s forwards; opacity: 0; }
+
+/* ===== SCREEN WRAPPER ===== */
+.screen {
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===== HEADER ===== */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: var(--tmc-white);
+  border-bottom: 1px solid var(--tmc-gray-200);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.header-logo {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--tmc-navy);
+  letter-spacing: -0.3px;
+}
+.header-logo span { color: var(--tmc-teal); }
+.header-back {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: var(--tmc-gray-100);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  font-size: 18px;
+  color: var(--tmc-gray-600);
+}
+.header-back:hover { background: var(--tmc-gray-200); }
+
+/* ===== PROGRESS BAR ===== */
+.progress-bar {
+  height: 3px;
+  background: var(--tmc-gray-200);
+  position: relative;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--tmc-teal), var(--tmc-teal-dark));
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 0 2px 2px 0;
+}
+.progress-label {
+  font-size: 12px;
+  color: var(--tmc-gray-400);
+  text-align: center;
+  padding: 8px 20px 0;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+/* ===== CONTENT ===== */
+.content {
+  flex: 1;
+  padding: 24px 20px 100px;
+  overflow-y: auto;
+}
+.content-tight { padding: 16px 20px 100px; }
+
+/* ===== TYPOGRAPHY ===== */
+.title-xl {
+  font-family: var(--font-display);
+  font-size: 32px;
+  font-weight: 600;
+  color: var(--tmc-navy);
+  line-height: 1.2;
+  letter-spacing: -0.5px;
+}
+.title-lg {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 600;
+  color: var(--tmc-navy);
+  line-height: 1.25;
+  letter-spacing: -0.3px;
+}
+.title-md {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--tmc-navy);
+  line-height: 1.3;
+}
+.subtitle {
+  font-size: 16px;
+  color: var(--tmc-gray-600);
+  line-height: 1.6;
+  margin-top: 12px;
+}
+.subtitle-sm {
+  font-size: 14px;
+  color: var(--tmc-gray-600);
+  line-height: 1.5;
+  margin-top: 8px;
+}
+.label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--tmc-gray-400);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+
+/* ===== BUTTONS ===== */
+.btn-primary {
+  width: 100%;
+  padding: 16px 24px;
+  background: var(--tmc-teal);
+  color: white;
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.25s;
+  letter-spacing: 0.2px;
+}
+.btn-primary:hover { background: var(--tmc-teal-dark); transform: translateY(-1px); box-shadow: var(--shadow-md); }
+.btn-primary:active { transform: translateY(0); }
+.btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+
+.btn-secondary {
+  width: 100%;
+  padding: 14px 24px;
+  background: transparent;
+  color: var(--tmc-teal);
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 600;
+  border: 2px solid var(--tmc-teal);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.25s;
+}
+.btn-secondary:hover { background: var(--tmc-teal-light); }
+
+.btn-ghost {
+  background: none;
+  border: none;
+  color: var(--tmc-teal);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 8px 0;
+  transition: opacity 0.2s;
+}
+.btn-ghost:hover { opacity: 0.7; }
+
+/* ===== FIXED BOTTOM ACTION ===== */
+.bottom-action {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 16px 20px;
+  padding-bottom: calc(16px + env(safe-area-inset-bottom));
+  background: linear-gradient(0deg, var(--tmc-cream) 70%, transparent);
+  z-index: 90;
+}
+.bottom-action .btn-primary { max-width: 480px; margin: 0 auto; display: block; }
+
+/* ===== CARDS ===== */
+.card {
+  background: var(--tmc-white);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--tmc-gray-200);
+}
+.card-highlight {
+  background: var(--tmc-white);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: var(--shadow-md);
+  border: 2px solid var(--tmc-teal);
+  position: relative;
+}
+
+/* ===== OPTION CARDS (for questionnaire) ===== */
+.option-card {
+  background: var(--tmc-white);
+  border: 2px solid var(--tmc-gray-200);
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 10px;
+}
+.option-card:hover { border-color: var(--tmc-teal); background: var(--tmc-teal-light); }
+.option-card.selected {
+  border-color: var(--tmc-teal);
+  background: var(--tmc-teal-light);
+}
+.option-card .radio {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  border: 2px solid var(--tmc-gray-300);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+.option-card.selected .radio {
+  border-color: var(--tmc-teal);
+  background: var(--tmc-teal);
+}
+.option-card.selected .radio::after {
+  content: '';
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: white;
+}
+.option-label { font-size: 15px; font-weight: 500; color: var(--tmc-navy); }
+.option-desc { font-size: 13px; color: var(--tmc-gray-600); margin-top: 2px; }
+
+/* ===== FITZPATRICK SKIN TYPE ===== */
+.skin-type-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 16px;
+}
+.skin-type-card {
+  border: 2px solid var(--tmc-gray-200);
+  border-radius: var(--radius-md);
+  padding: 14px 10px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.skin-type-card:hover { border-color: var(--tmc-teal); }
+.skin-type-card.selected { border-color: var(--tmc-teal); background: var(--tmc-teal-light); }
+.skin-swatch {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  margin: 0 auto 8px;
+  border: 2px solid rgba(0,0,0,0.08);
+}
+.skin-type-label { font-size: 12px; font-weight: 600; color: var(--tmc-navy); }
+.skin-type-desc { font-size: 11px; color: var(--tmc-gray-600); margin-top: 2px; line-height: 1.3; }
+
+/* ===== BODY MAP ===== */
+.body-map-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  margin-top: 16px;
+}
+.body-map-svg {
+  width: 200px;
+  cursor: pointer;
+}
+.body-map-svg .body-outline {
+  fill: #f0e6da;
+  stroke: var(--tmc-gray-300);
+  stroke-width: 1.5;
+}
+.body-map-svg .hotspot {
+  fill: transparent;
+  stroke: none;
+  cursor: pointer;
+  transition: fill 0.2s;
+}
+.body-map-svg .hotspot:hover { fill: rgba(46, 196, 182, 0.15); }
+.body-map-svg .marker {
+  fill: var(--tmc-coral);
+  stroke: white;
+  stroke-width: 2;
+}
+.body-map-svg .marker-pulse {
+  fill: var(--tmc-coral);
+  opacity: 0.3;
+  animation: breathe 2s infinite;
+}
+.body-region-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  width: 100%;
+  margin-top: 8px;
+}
+.body-region-btn {
+  padding: 12px 14px;
+  background: var(--tmc-white);
+  border: 2px solid var(--tmc-gray-200);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--tmc-navy);
+  transition: all 0.2s;
+  text-align: center;
+}
+.body-region-btn:hover { border-color: var(--tmc-teal); }
+.body-region-btn.has-photo {
+  border-color: var(--tmc-teal);
+  background: var(--tmc-teal-light);
+  position: relative;
+}
+.body-region-btn.has-photo::after {
+  content: '✓';
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 20px;
+  height: 20px;
+  background: var(--tmc-teal);
+  color: white;
+  border-radius: 50%;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ===== PHOTO UPLOAD ===== */
+.photo-upload-zone {
+  border: 2px dashed var(--tmc-gray-300);
+  border-radius: var(--radius-lg);
+  padding: 32px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: var(--tmc-white);
+}
+.photo-upload-zone:hover { border-color: var(--tmc-teal); background: var(--tmc-teal-light); }
+.photo-upload-icon { font-size: 40px; margin-bottom: 12px; }
+.photo-upload-text { font-size: 15px; font-weight: 500; color: var(--tmc-navy); }
+.photo-upload-hint { font-size: 13px; color: var(--tmc-gray-400); margin-top: 4px; }
+
+.photo-preview {
+  width: 100%;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  position: relative;
+  margin-top: 12px;
+}
+.photo-preview img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  display: block;
+}
+.photo-preview-remove {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 28px;
+  height: 28px;
+  background: rgba(0,0,0,0.6);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ===== ABCDE GUIDE ===== */
+.abcde-cards { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
+.abcde-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  background: var(--tmc-white);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  border: 1px solid var(--tmc-gray-200);
+}
+.abcde-letter {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--tmc-navy);
+  color: white;
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.abcde-title { font-size: 14px; font-weight: 600; color: var(--tmc-navy); }
+.abcde-desc { font-size: 13px; color: var(--tmc-gray-600); margin-top: 2px; line-height: 1.4; }
+
+/* ===== CONSENT CHECKBOX ===== */
+.consent-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-top: 16px;
+}
+.consent-checkbox {
+  width: 22px;
+  height: 22px;
+  border: 2px solid var(--tmc-gray-300);
+  border-radius: 4px;
+  flex-shrink: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  margin-top: 2px;
+}
+.consent-checkbox.checked {
+  background: var(--tmc-teal);
+  border-color: var(--tmc-teal);
+}
+.consent-checkbox.checked::after {
+  content: '✓';
+  color: white;
+  font-size: 14px;
+  font-weight: 700;
+}
+.consent-text {
+  font-size: 13px;
+  color: var(--tmc-gray-600);
+  line-height: 1.5;
+}
+.consent-text a { color: var(--tmc-teal); text-decoration: underline; }
+
+/* ===== INPUT FIELDS ===== */
+.input-group { margin-bottom: 16px; }
+.input-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--tmc-navy);
+  margin-bottom: 6px;
+  display: block;
+}
+.input-field {
+  width: 100%;
+  padding: 14px 16px;
+  border: 2px solid var(--tmc-gray-200);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--tmc-navy);
+  transition: border-color 0.2s;
+  background: var(--tmc-white);
+}
+.input-field:focus { outline: none; border-color: var(--tmc-teal); }
+.input-field::placeholder { color: var(--tmc-gray-400); }
+
+/* ===== RISK SCORE VISUAL ===== */
+.risk-gauge {
+  width: 200px;
+  height: 100px;
+  margin: 20px auto;
+  position: relative;
+}
+.risk-gauge-bg {
+  fill: none;
+  stroke: var(--tmc-gray-200);
+  stroke-width: 12;
+}
+.risk-gauge-fill {
+  fill: none;
+  stroke-width: 12;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.risk-gauge-label {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 700;
+}
+
+/* ===== CLINIC CARDS ===== */
+.clinic-card {
+  background: var(--tmc-white);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  border: 1px solid var(--tmc-gray-200);
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  margin-bottom: 10px;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+.clinic-card:hover { border-color: var(--tmc-teal); box-shadow: var(--shadow-sm); }
+.clinic-card.recommended { border: 2px solid var(--tmc-teal); }
+.clinic-icon {
+  width: 44px;
+  height: 44px;
+  background: var(--tmc-teal-light);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+.clinic-name { font-size: 15px; font-weight: 600; color: var(--tmc-navy); }
+.clinic-distance { font-size: 13px; color: var(--tmc-gray-600); }
+.clinic-badge {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--tmc-teal);
+  background: var(--tmc-teal-light);
+  padding: 3px 10px;
+  border-radius: 20px;
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+/* ===== SERVICE RECOMMENDATION ===== */
+.service-card {
+  background: linear-gradient(135deg, var(--tmc-navy), var(--tmc-navy-light));
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  color: white;
+  margin-bottom: 16px;
+}
+.service-card .service-name {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.service-card .service-desc {
+  font-size: 14px;
+  opacity: 0.8;
+  line-height: 1.5;
+}
+.service-card .service-price {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--tmc-gold);
+  margin-top: 12px;
+}
+
+/* ===== PROFILE SUMMARY ===== */
+.profile-section {
+  margin-bottom: 20px;
+}
+.profile-section-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--tmc-gray-400);
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  margin-bottom: 10px;
+}
+.profile-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--tmc-gray-100);
+  font-size: 14px;
+}
+.profile-row-label { color: var(--tmc-gray-600); }
+.profile-row-value { font-weight: 600; color: var(--tmc-navy); }
+
+/* ===== TAGS ===== */
+.tag {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.tag-low { background: #e8f5e9; color: #2e7d32; }
+.tag-moderate { background: #fff3e0; color: #e65100; }
+.tag-high { background: #fce4ec; color: #c62828; }
+
+/* ===== WELCOME HERO ===== */
+.welcome-hero {
+  background: linear-gradient(160deg, var(--tmc-navy) 0%, #2a3f5a 50%, var(--tmc-navy-light) 100%);
+  border-radius: 0 0 var(--radius-xl) var(--radius-xl);
+  padding: 48px 24px 40px;
+  text-align: center;
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+.welcome-hero::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -20%;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(46,196,182,0.15) 0%, transparent 70%);
+}
+.welcome-hero::after {
+  content: '';
+  position: absolute;
+  bottom: -30%;
+  left: -10%;
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(224,122,95,0.1) 0%, transparent 70%);
+}
+.welcome-hero-icon {
+  width: 72px;
+  height: 72px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  margin: 0 auto 20px;
+  backdrop-filter: blur(10px);
+  position: relative;
+  z-index: 1;
+}
+.welcome-hero .title-xl {
+  color: white;
+  position: relative;
+  z-index: 1;
+}
+.welcome-hero .subtitle {
+  color: rgba(255,255,255,0.75);
+  position: relative;
+  z-index: 1;
+}
+
+/* ===== FEATURES LIST ===== */
+.feature-list { margin-top: 24px; }
+.feature-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 14px 0;
+}
+.feature-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.feature-icon-teal { background: var(--tmc-teal-light); }
+.feature-icon-coral { background: var(--tmc-coral-light); }
+.feature-icon-gold { background: #fdf5e6; }
+.feature-title { font-size: 15px; font-weight: 600; color: var(--tmc-navy); }
+.feature-desc { font-size: 13px; color: var(--tmc-gray-600); margin-top: 2px; line-height: 1.4; }
+
+/* ===== DISCLAIMER ===== */
+.disclaimer {
+  background: var(--tmc-gray-100);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  font-size: 12px;
+  color: var(--tmc-gray-600);
+  line-height: 1.5;
+  margin-top: 20px;
+}
+.disclaimer strong { color: var(--tmc-gray-800); }
+
+/* ===== LOADING SCREEN ===== */
+.loading-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  text-align: center;
+  padding: 40px 24px;
+}
+.loading-spinner {
+  width: 56px;
+  height: 56px;
+  border: 3px solid var(--tmc-gray-200);
+  border-top-color: var(--tmc-teal);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-bottom: 24px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-messages { margin-top: 12px; }
+.loading-msg {
+  font-size: 14px;
+  color: var(--tmc-gray-600);
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* ===== SHARE BUTTON ===== */
+.share-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
+.share-btn {
+  flex: 1;
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--tmc-gray-200);
+  background: var(--tmc-white);
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--tmc-navy);
+  transition: all 0.2s;
+  text-align: center;
+}
+.share-btn:hover { border-color: var(--tmc-teal); background: var(--tmc-teal-light); }
+
+/* ===== DIVIDER ===== */
+.divider {
+  height: 1px;
+  background: var(--tmc-gray-200);
+  margin: 20px 0;
+}
+
+/* ===== BADGE ===== */
+.trust-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--tmc-gray-600);
+  margin-top: 16px;
+  justify-content: center;
+}
+.trust-badge-icon {
+  width: 16px;
+  height: 16px;
+  color: var(--tmc-teal);
+}
+
+/* ===== MODAL ===== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 200;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  animation: fadeIn 0.2s ease-out;
+}
+.modal-content {
+  background: var(--tmc-white);
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  padding: 24px 20px 32px;
+  width: 100%;
+  max-width: 480px;
+  max-height: 80vh;
+  overflow-y: auto;
+  animation: slideUp 0.3s ease-out;
+}
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+.modal-handle {
+  width: 40px;
+  height: 4px;
+  background: var(--tmc-gray-300);
+  border-radius: 2px;
+  margin: 0 auto 20px;
+}
+
+/* ===== PHOTO TIPS ===== */
+.photo-tips {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-top: 16px;
+}
+.photo-tip {
+  background: var(--tmc-white);
+  border: 1px solid var(--tmc-gray-200);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  text-align: center;
+}
+.photo-tip-icon { font-size: 24px; margin-bottom: 6px; }
+.photo-tip-text { font-size: 12px; color: var(--tmc-gray-600); line-height: 1.3; }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 380px) {
+  .title-xl { font-size: 26px; }
+  .title-lg { font-size: 22px; }
+  .skin-type-grid { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+// ===== APP STATE =====
+const state = {
+  screen: 'welcome', // welcome, email, consent, skintype, questionnaire, bodymap, photoUpload, abcde, loading, profile
+  email: '',
+  name: '',
+  postcode: '',
+  consentMarketing: false,
+  consentData: false,
+  skinType: null,
+  answers: {},
+  currentQuestion: 0,
+  bodyPhotos: {},
+  selectedRegion: null,
+  riskScore: null,
+  riskLevel: null,
+  profileSummary: null,
+  photoTipsShown: false,
+  abcdeAnswers: {},
+  history: ['welcome'],
+};
+
+// ===== CLINICS DATA =====
+const clinics = [
+  { name: 'London — Marylebone', postcode: 'W1', distance: null, id: 'marylebone' },
+  { name: 'London — City', postcode: 'EC2', distance: null, id: 'city' },
+  { name: 'London — Chelsea', postcode: 'SW3', distance: null, id: 'chelsea' },
+  { name: 'London — Canary Wharf', postcode: 'E14', distance: null, id: 'canarywharf' },
+  { name: 'Manchester', postcode: 'M2', distance: null, id: 'manchester' },
+  { name: 'Leeds', postcode: 'LS1', distance: null, id: 'leeds' },
+  { name: 'Bristol', postcode: 'BS1', distance: null, id: 'bristol' },
+  { name: 'Birmingham', postcode: 'B2', distance: null, id: 'birmingham' },
+];
+
+// ===== QUESTIONNAIRE =====
+const questions = [
+  {
+    id: 'age',
+    question: 'What is your age range?',
+    options: [
+      { value: 'under25', label: 'Under 25', score: 1 },
+      { value: '25-34', label: '25–34', score: 2 },
+      { value: '35-44', label: '35–44', score: 3 },
+      { value: '45-54', label: '45–54', score: 4 },
+      { value: '55-64', label: '55–64', score: 5 },
+      { value: '65plus', label: '65+', score: 6 },
+    ]
+  },
+  {
+    id: 'family_history',
+    question: 'Has anyone in your family been diagnosed with skin cancer?',
+    subtitle: 'Including melanoma or non-melanoma skin cancers',
+    options: [
+      { value: 'yes_immediate', label: 'Yes — immediate family', desc: 'Parent, sibling, or child', score: 8 },
+      { value: 'yes_extended', label: 'Yes — extended family', desc: 'Grandparent, aunt, uncle, cousin', score: 5 },
+      { value: 'no', label: 'No', score: 0 },
+      { value: 'unsure', label: "I'm not sure", score: 3 },
+    ]
+  },
+  {
+    id: 'personal_history',
+    question: 'Have you ever been diagnosed with skin cancer or had a suspicious mole removed?',
+    options: [
+      { value: 'yes_cancer', label: 'Yes — skin cancer diagnosis', score: 10 },
+      { value: 'yes_mole', label: 'Yes — suspicious mole removed', score: 7 },
+      { value: 'no', label: 'No', score: 0 },
+    ]
+  },
+  {
+    id: 'sunburn_history',
+    question: 'How often have you experienced sunburn in your life?',
+    subtitle: 'Including childhood sunburns',
+    options: [
+      { value: 'frequently', label: 'Frequently', desc: 'Many times, including blistering burns', score: 7 },
+      { value: 'occasionally', label: 'Occasionally', desc: 'A fair number of times over the years', score: 4 },
+      { value: 'rarely', label: 'Rarely', desc: 'Once or twice', score: 2 },
+      { value: 'never', label: 'Never or almost never', score: 0 },
+    ]
+  },
+  {
+    id: 'outdoor_work',
+    question: 'Does your job or lifestyle involve significant time outdoors?',
+    options: [
+      { value: 'work_outdoor', label: 'Yes — I work outdoors', desc: 'Construction, farming, gardening, sports coaching, etc.', score: 6 },
+      { value: 'leisure_outdoor', label: 'Yes — mostly leisure', desc: 'Running, cycling, golf, hiking, sailing, etc.', score: 4 },
+      { value: 'both', label: 'Both work and leisure', score: 7 },
+      { value: 'mostly_indoor', label: 'Mostly indoors', score: 1 },
+    ]
+  },
+  {
+    id: 'sun_holidays',
+    question: 'How often do you take holidays in sunny climates?',
+    subtitle: 'Mediterranean, Caribbean, Australia, etc.',
+    options: [
+      { value: '3plus', label: '3 or more times a year', score: 5 },
+      { value: '1-2', label: '1–2 times a year', score: 3 },
+      { value: 'occasionally', label: 'Every couple of years', score: 2 },
+      { value: 'rarely', label: 'Rarely or never', score: 0 },
+    ]
+  },
+  {
+    id: 'sunbed_use',
+    question: 'Have you ever used sunbeds?',
+    options: [
+      { value: 'regularly', label: 'Yes — regularly', desc: 'Weekly or monthly use', score: 8 },
+      { value: 'occasionally', label: 'Yes — occasionally', desc: 'A few times', score: 4 },
+      { value: 'past', label: 'Yes — but not anymore', desc: 'Used to but stopped', score: 3 },
+      { value: 'never', label: 'Never', score: 0 },
+    ]
+  },
+  {
+    id: 'mole_count',
+    question: 'Approximately how many moles do you have on your body?',
+    options: [
+      { value: '50plus', label: '50 or more', score: 7 },
+      { value: '20-50', label: '20–50', score: 5 },
+      { value: '10-20', label: '10–20', score: 3 },
+      { value: 'under10', label: 'Fewer than 10', score: 1 },
+    ]
+  },
+  {
+    id: 'changing_moles',
+    question: 'Have you noticed any moles that have changed recently?',
+    subtitle: 'Changes in size, shape, colour, or feel',
+    options: [
+      { value: 'yes_multiple', label: 'Yes — more than one', score: 9 },
+      { value: 'yes_one', label: 'Yes — one mole', score: 7 },
+      { value: 'unsure', label: "I'm not sure", score: 4 },
+      { value: 'no', label: 'No', score: 0 },
+    ]
+  },
+  {
+    id: 'sunscreen_use',
+    question: 'How often do you use SPF sun protection?',
+    options: [
+      { value: 'always', label: 'Daily — year round', score: 0 },
+      { value: 'summer', label: 'In summer or on sunny days', score: 2 },
+      { value: 'holiday', label: 'Only on holiday', score: 4 },
+      { value: 'rarely', label: 'Rarely or never', score: 6 },
+    ]
+  },
+  {
+    id: 'immune',
+    question: 'Do you take any medication that suppresses your immune system?',
+    subtitle: 'For example after organ transplant, or for autoimmune conditions',
+    options: [
+      { value: 'yes', label: 'Yes', score: 6 },
+      { value: 'no', label: 'No', score: 0 },
+      { value: 'unsure', label: "I'm not sure", score: 2 },
+    ]
+  },
+];
+
+// ===== SKIN TYPES (Fitzpatrick) =====
+const skinTypes = [
+  { id: 1, label: 'Type I', desc: 'Very fair, always burns, never tans', color: '#FDEBD0', score: 6 },
+  { id: 2, label: 'Type II', desc: 'Fair, burns easily, tans minimally', color: '#F5CBA7', score: 5 },
+  { id: 3, label: 'Type III', desc: 'Medium, sometimes burns, tans gradually', color: '#E0B88A', score: 3 },
+  { id: 4, label: 'Type IV', desc: 'Olive, rarely burns, tans easily', color: '#C49A6C', score: 2 },
+  { id: 5, label: 'Type V', desc: 'Brown, very rarely burns', color: '#9B7653', score: 1 },
+  { id: 6, label: 'Type VI', desc: 'Dark brown/black, never burns', color: '#6B4423', score: 0 },
+];
+
+// ===== BODY REGIONS =====
+const bodyRegions = [
+  { id: 'head_face', label: 'Head & Face', emoji: '😊' },
+  { id: 'neck', label: 'Neck', emoji: '🧣' },
+  { id: 'chest', label: 'Chest', emoji: '👕' },
+  { id: 'back', label: 'Back', emoji: '🔙' },
+  { id: 'abdomen', label: 'Abdomen', emoji: '🫄' },
+  { id: 'left_arm', label: 'Left Arm', emoji: '💪' },
+  { id: 'right_arm', label: 'Right Arm', emoji: '💪' },
+  { id: 'left_leg', label: 'Left Leg', emoji: '🦵' },
+  { id: 'right_leg', label: 'Right Leg', emoji: '🦵' },
+  { id: 'hands', label: 'Hands & Feet', emoji: '🤲' },
+];
+
+// ===== ABCDE Items =====
+const abcdeItems = [
+  { letter: 'A', title: 'Asymmetry', desc: 'One half of the mole doesn\'t match the other half.' },
+  { letter: 'B', title: 'Border', desc: 'The edges are irregular, ragged, blurred, or notched.' },
+  { letter: 'C', title: 'Colour', desc: 'The colour is not uniform — shades of brown, black, red, white, or blue.' },
+  { letter: 'D', title: 'Diameter', desc: 'The mole is larger than 6mm (about the size of a pencil eraser).' },
+  { letter: 'E', title: 'Evolving', desc: 'The mole is changing in size, shape, colour, or feel. New symptoms like itching or bleeding.' },
+];
+
+// ===== RENDER ENGINE =====
+function render() {
+  const app = document.getElementById('app');
+  switch(state.screen) {
+    case 'welcome': app.innerHTML = renderWelcome(); break;
+    case 'email': app.innerHTML = renderEmail(); break;
+    case 'consent': app.innerHTML = renderConsent(); break;
+    case 'skintype': app.innerHTML = renderSkinType(); break;
+    case 'questionnaire': app.innerHTML = renderQuestionnaire(); break;
+    case 'bodymap': app.innerHTML = renderBodyMap(); break;
+    case 'photoUpload': app.innerHTML = renderPhotoUpload(); break;
+    case 'phototips': app.innerHTML = renderPhotoTips(); break;
+    case 'abcde': app.innerHTML = renderABCDE(); break;
+    case 'loading': app.innerHTML = renderLoading(); break;
+    case 'profile': app.innerHTML = renderProfile(); break;
+  }
+  bindEvents();
+}
+
+function navigate(screen) {
+  state.history.push(screen);
+  state.screen = screen;
+  window.scrollTo(0, 0);
+  render();
+}
+
+function goBack() {
+  if (state.history.length > 1) {
+    state.history.pop();
+    state.screen = state.history[state.history.length - 1];
+    render();
+  }
+}
+
+function getProgress() {
+  const screens = ['welcome','email','consent','skintype','questionnaire','bodymap','phototips','abcde','loading','profile'];
+  const idx = screens.indexOf(state.screen);
+  if (state.screen === 'questionnaire') {
+    const base = 4 / 10;
+    const qProgress = (state.currentQuestion / questions.length) * (1/10);
+    return Math.round((base + qProgress) * 100);
+  }
+  if (state.screen === 'photoUpload') return 65;
+  return Math.round((idx / (screens.length - 1)) * 100);
+}
+
+function getProgressLabel() {
+  const labels = {
+    welcome: '', email: 'Step 1 of 6 — Your Details', consent: 'Step 1 of 6 — Consent',
+    skintype: 'Step 2 of 6 — Skin Type', questionnaire: `Step 3 of 6 — Question ${state.currentQuestion + 1} of ${questions.length}`,
+    bodymap: 'Step 4 of 6 — Body Map', photoUpload: 'Step 4 of 6 — Photo Upload',
+    phototips: 'Step 5 of 6 — Photo Tips', abcde: 'Step 5 of 6 — Self Check',
+    loading: 'Building your profile...', profile: 'Your Mole Clinic Profile',
+  };
+  return labels[state.screen] || '';
+}
+
+function renderHeader(showBack = true) {
+  if (state.screen === 'welcome' || state.screen === 'profile') return '';
+  return `
+    <div class="header">
+      ${showBack ? '<button class="header-back" onclick="goBack()">←</button>' : '<div></div>'}
+      <div class="header-logo">The Mole <span>Clinic</span></div>
+      <div style="width:36px"></div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" style="width:${getProgress()}%"></div></div>
+    <div class="progress-label">${getProgressLabel()}</div>
+  `;
+}
+
+// ===== SCREEN RENDERERS =====
+
+function renderWelcome() {
+  return `
+    <div class="screen">
+      <div class="welcome-hero animate-in">
+        <div class="welcome-hero-icon">🔬</div>
+        <h1 class="title-xl">Free Skin<br>Health Check</h1>
+        <p class="subtitle">Get your personalised Mole Clinic Profile in minutes. Know your risk. Know your next step.</p>
+      </div>
+      <div class="content">
+        <div class="feature-list">
+          <div class="feature-item animate-in-delay-1">
+            <div class="feature-icon feature-icon-teal">📋</div>
+            <div>
+              <div class="feature-title">Risk Profile Assessment</div>
+              <div class="feature-desc">Quick questions about your skin, lifestyle, and family history</div>
+            </div>
+          </div>
+          <div class="feature-item animate-in-delay-2">
+            <div class="feature-icon feature-icon-coral">📸</div>
+            <div>
+              <div class="feature-title">Photo Upload</div>
+              <div class="feature-desc">Map and photograph moles or areas of concern</div>
+            </div>
+          </div>
+          <div class="feature-item animate-in-delay-3">
+            <div class="feature-icon feature-icon-gold">📊</div>
+            <div>
+              <div class="feature-title">Your Mole Clinic Profile</div>
+              <div class="feature-desc">Personalised risk summary with recommended next steps and nearest clinic</div>
+            </div>
+          </div>
+        </div>
+        <div class="disclaimer animate-in-delay-4">
+          <strong>Important:</strong> This is not a medical diagnosis. This tool helps you understand your skin cancer risk factors and recommends appropriate professional skin checks.
+        </div>
+        <div class="trust-badge animate-in-delay-4">
+          🔒 Your data is encrypted and stored securely
+        </div>
+      </div>
+      <div class="bottom-action">
+        <button class="btn-primary" onclick="navigate('email')">Start Your Free Check →</button>
+      </div>
+    </div>
+  `;
+}
+
+function renderEmail() {
+  return `
+    <div class="screen">
+      ${renderHeader()}
+      <div class="content animate-in">
+        <h2 class="title-lg">Let's start with<br>your details</h2>
+        <p class="subtitle">We'll use these to create your personal Mole Clinic Profile.</p>
+        <div style="margin-top:24px">
+          <div class="input-group">
+            <label class="input-label">First name</label>
+            <input class="input-field" type="text" id="nameInput" placeholder="Your first name" value="${state.name}">
+          </div>
+          <div class="input-group">
+            <label class="input-label">Email address</label>
+            <input class="input-field" type="email" id="emailInput" placeholder="your@email.com" value="${state.email}">
+          </div>
+          <div class="input-group">
+            <label class="input-label">Postcode</label>
+            <input class="input-field" type="text" id="postcodeInput" placeholder="e.g. M1 2AB" value="${state.postcode}" maxlength="8" style="text-transform:uppercase">
+          </div>
+        </div>
+        <div class="disclaimer" style="margin-top:12px">
+          We need your postcode to recommend your nearest Mole Clinic location.
+        </div>
+      </div>
+      <div class="bottom-action">
+        <button class="btn-primary" id="emailNext" disabled>Continue →</button>
+      </div>
+    </div>
+  `;
+}
+
+function renderConsent() {
+  return `
+    <div class="screen">
+      ${renderHeader()}
+      <div class="content animate-in">
+        <h2 class="title-lg">Before we continue</h2>
+        <p class="subtitle">We need your consent to process your information and keep you updated.</p>
+        
+        <div style="margin-top:24px">
+          <div class="card" style="margin-bottom:12px">
+            <div class="consent-row">
+              <div class="consent-checkbox ${state.consentData ? 'checked' : ''}" id="consentData"></div>
+              <div class="consent-text">
+                <strong>Data processing consent</strong> (required)<br>
+                I consent to The Mole Clinic collecting and processing my personal data and photographs for the purpose of generating my skin health risk profile. My data will be stored securely in accordance with GDPR.
+                <a href="#">Read full privacy policy</a>
+              </div>
+            </div>
+          </div>
+          
+          <div class="card">
+            <div class="consent-row">
+              <div class="consent-checkbox ${state.consentMarketing ? 'checked' : ''}" id="consentMarketing"></div>
+              <div class="consent-text">
+                <strong>Marketing communications</strong> (optional)<br>
+                I'd like to receive skin health tips, seasonal reminders, and special offers from The Mole Clinic by email. You can unsubscribe at any time.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="disclaimer">
+          <strong>Your photos are private.</strong> Uploaded photographs are stored securely and only used to help generate your risk profile. They are never shared with third parties.
+        </div>
+      </div>
+      <div class="bottom-action">
+        <button class="btn-primary" id="consentNext" ${!state.consentData ? 'disabled' : ''}>Continue →</button>
+      </div>
+    </div>
+  `;
+}
+
+function renderSkinType() {
+  return `
+    <div class="screen">
+      ${renderHeader()}
+      <div class="content animate-in">
+        <h2 class="title-lg">What's your skin type?</h2>
+        <p class="subtitle">Select the Fitzpatrick skin type that best describes your natural skin tone and how it reacts to sun exposure.</p>
+        
+        <div class="skin-type-grid">
+          ${skinTypes.map(st => `
+            <div class="skin-type-card ${state.skinType === st.id ? 'selected' : ''}" data-skin="${st.id}">
+              <div class="skin-swatch" style="background:${st.color}"></div>
+              <div class="skin-type-label">${st.label}</div>
+              <div class="skin-type-desc">${st.desc}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+      <div class="bottom-action">
+        <button class="btn-primary" id="skinNext" ${!state.skinType ? 'disabled' : ''}>Continue →</button>
+      </div>
+    </div>
+  `;
+}
+
+function renderQuestionnaire() {
+  const q = questions[state.currentQuestion];
+  const selected = state.answers[q.id];
+  return `
+    <div class="screen">
+      ${renderHeader()}
+      <div class="content" style="animation: slideInRight 0.3s ease-out">
+        <h2 class="title-lg">${q.question}</h2>
+        ${q.subtitle ? `<p class="subtitle-sm">${q.subtitle}</p>` : ''}
+        
+        <div style="margin-top:20px">
+          ${q.options.map(opt => `
+            <div class="option-card ${selected === opt.value ? 'selected' : ''}" data-answer="${opt.value}">
+              <div class="radio"></div>
+              <div>
+                <div class="option-label">${opt.label}</div>
+                ${opt.desc ? `<div class="option-desc">${opt.desc}</div>` : ''}
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+      <div class="bottom-action">
+        <button class="btn-primary" id="questionNext" ${!selected ? 'disabled' : ''}>${state.currentQuestion === questions.length - 1 ? 'Continue to Photos →' : 'Next Question →'}</button>
+      </div>
+    </div>
+  `;
+}
+
+function renderBodyMap() {
+  const photosCount = Object.keys(state.bodyPhotos).length;
+  return `
+    <div class="screen">
+      ${renderHeader()}
+      <div class="content-tight animate-in">
+        <h2 class="title-lg">Map your moles</h2>
+        <p class="subtitle-sm">Tap a body area to upload a photo of any moles or areas of concern. Upload at least one photo to continue.</p>
+        
+        <div class="body-region-list" style="margin-top:20px">
+          ${bodyRegions.map(r => `
+            <button class="body-region-btn ${state.bodyPhotos[r.id] ? 'has-photo' : ''}" data-region="${r.id}">
+              ${r.emoji} ${r.label}
+            </button>
+          `).join('')}
+        </div>
+
+        ${photosCount > 0 ? `
+          <div style="margin-top:16px; text-align:center">
+            <span class="tag tag-low">${photosCount} photo${photosCount > 1 ? 's' : ''} uploaded</span>
+          </div>
+        ` : ''}
+      </div>
+      <div class="bottom-action">
+        <button class="btn-primary" id="bodyMapNext" ${photosCount === 0 ? 'disabled' : ''}>Continue to Self-Check →</button>
+      </div>
+    </div>
+  `;
+}
+
+function renderPhotoUpload() {
+  const region = bodyRegions.find(r => r.id === state.selectedRegion);
+  const hasPhoto = state.bodyPhotos[state.selectedRegion];
+  return `
+    <div class="screen">
+      ${renderHeader()}
+      <div class="content animate-in">
+        <h2 class="title-lg">${region ? region.emoji : '📸'} ${region ? region.label : 'Upload Photo'}</h2>
+        <p class="subtitle-sm">Take a clear photo of any moles or areas of concern in this region.</p>
+        
+        <div class="photo-tips" style="margin-top:16px">
+          <div class="photo-tip">
+            <div class="photo-tip-icon">💡</div>
+            <div class="photo-tip-text">Good, even lighting — avoid shadows</div>
+          </div>
+          <div class="photo-tip">
+            <div class="photo-tip-icon">📏</div>
+            <div class="photo-tip-text">15–30cm away from the mole</div>
+          </div>
+          <div class="photo-tip">
+            <div class="photo-tip-icon">🎯</div>
+            <div class="photo-tip-text">Keep the mole centred and in focus</div>
+          </div>
+          <div class="photo-tip">
+            <div class="photo-tip-icon">📐</div>
+            <div class="photo-tip-text">Include a coin for scale if possible</div>
+          </div>
+        </div>
+
+        ${hasPhoto ? `
+          <div class="photo-preview">
+            <img src="${hasPhoto}" alt="Uploaded photo">
+            <button class="photo-preview-remove" onclick="removePhoto('${state.selectedRegion}')">✕</button>
+          </div>
+        ` : `
+          <div class="photo-upload-zone" id="photoZone">
+            <div class="photo-upload-icon">📸</div>
+            <div class="photo-upload-text">Tap to take or upload a photo</div>
+            <div class="photo-upload-hint">JPG or PNG, max 10MB</div>
+          </div>
+        `}
+        <input type="file" id="photoInput" accept="image/*" capture="environment" style="display:none">
+        
+        <div style="margin-top:16px; display:flex; gap:10px">
+          <button class="btn-secondary" onclick="navigate('bodymap')" style="flex:1">← Back to Map</button>
+          ${hasPhoto ? `<button class="btn-primary" onclick="navigate('bodymap')" style="flex:1">Save & Continue</button>` : ''}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderPhotoTips() {
+  return `
+    <div class="screen">
+      ${renderHeader()}
+      <div class="content animate-in">
+        <h2 class="title-lg">📸 Photo Guide</h2>
+        <p class="subtitle">Better photos help us give you better advice. Here's how to get the best shots.</p>
+        <!-- tips already shown in upload screen -->
+      </div>
+    </div>
+  `;
+}
+
+function renderABCDE() {
+  return `
+    <div class="screen">
+      ${renderHeader()}
+      <div class="content animate-in">
+        <h2 class="title-lg">The ABCDE<br>Self-Check</h2>
+        <p class="subtitle-sm">Dermatologists use the ABCDE rule to assess moles. Have you noticed any of these in your moles?</p>
+        
+        <div class="abcde-cards">
+          ${abcdeItems.map(item => `
+            <div class="abcde-card" style="cursor:pointer" data-abcde="${item.letter}">
+              <div class="abcde-letter ${state.abcdeAnswers[item.letter] ? 'style="background:var(--tmc-coral)"' : ''}">${item.letter}</div>
+              <div style="flex:1">
+                <div class="abcde-title">${item.title}</div>
+                <div class="abcde-desc">${item.desc}</div>
+              </div>
+              <div class="consent-checkbox ${state.abcdeAnswers[item.letter] ? 'checked' : ''}" style="margin-top:4px"></div>
+            </div>
+          `).join('')}
+        </div>
+
+        <div class="disclaimer" style="margin-top:16px">
+          <strong>Don't worry</strong> — noticing these features doesn't mean you have skin cancer. It simply means a professional check is recommended.
+        </div>
+      </div>
+      <div class="bottom-action">
+        <button class="btn-primary" onclick="calculateAndShow()">Build My Profile →</button>
+      </div>
+    </div>
+  `;
+}
+
+function renderLoading() {
+  return `
+    <div class="screen">
+      ${renderHeader(false)}
+      <div class="loading-screen">
+        <div class="loading-spinner"></div>
+        <h2 class="title-md" style="margin-bottom:8px">Building your profile</h2>
+        <div class="loading-messages">
+          <p class="loading-msg" id="loadingMsg">Analysing your risk factors...</p>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderProfile() {
+  const rs = state.riskScore;
+  const rl = state.riskLevel;
+  const tagClass = rl === 'Low' ? 'tag-low' : rl === 'Moderate' ? 'tag-moderate' : 'tag-high';
+  const gaugeColor = rl === 'Low' ? '#28a745' : rl === 'Moderate' ? '#e65100' : '#c62828';
+  const gaugePercent = Math.min(rs / 100, 1);
+  const circumference = Math.PI * 80;
+  const dashOffset = circumference * (1 - gaugePercent);
+  const abcdeCount = Object.values(state.abcdeAnswers).filter(Boolean).length;
+  const photosCount = Object.keys(state.bodyPhotos).length;
+
+  const service = getRecommendedService();
+  const nearestClinic = getNearestClinic();
+
+  return `
+    <div class="screen">
+      <div class="header">
+        <div></div>
+        <div class="header-logo">The Mole <span>Clinic</span></div>
+        <div></div>
+      </div>
+      <div class="content animate-in">
+        <div style="text-align:center; margin-bottom:24px;">
+          <p class="label">Your Mole Clinic Profile</p>
+          <h2 class="title-xl">${state.name || 'Your'}'s<br>Skin Health</h2>
+        </div>
+
+        <!-- Risk Gauge -->
+        <div style="text-align:center" class="animate-in-delay-1">
+          <svg width="200" height="120" viewBox="0 0 200 120">
+            <path d="M 20 100 A 80 80 0 0 1 180 100" class="risk-gauge-bg" fill="none" stroke="#e8e8e8" stroke-width="12"/>
+            <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="${gaugeColor}" stroke-width="12" stroke-linecap="round"
+              stroke-dasharray="${circumference/2}" stroke-dashoffset="${circumference/2 - (gaugePercent * circumference/2)}"
+              style="transition: stroke-dashoffset 1.5s cubic-bezier(0.4,0,0.2,1)"/>
+            <text x="100" y="85" text-anchor="middle" class="risk-gauge-label" fill="${gaugeColor}" font-family="Fraunces,serif" font-size="28" font-weight="700">${rs}</text>
+            <text x="100" y="108" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" fill="#9a9a9a">out of 100</text>
+          </svg>
+          <div style="margin-top:4px">
+            <span class="tag ${tagClass}" style="font-size:14px; padding:6px 16px;">${rl} Risk</span>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Service Recommendation -->
+        <div class="animate-in-delay-2">
+          <div class="service-card">
+            <div style="font-size:12px; text-transform:uppercase; letter-spacing:1px; opacity:0.6; margin-bottom:8px">Recommended for you</div>
+            <div class="service-name">${service.name}</div>
+            <div class="service-desc">${service.desc}</div>
+            <div class="service-price">From ${service.price}</div>
+          </div>
+        </div>
+
+        <!-- Nearest Clinic -->
+        <div class="animate-in-delay-3">
+          <p class="label">Your nearest clinic</p>
+          <div class="clinic-card recommended">
+            <div class="clinic-icon">📍</div>
+            <div>
+              <div class="clinic-name">${nearestClinic.name}</div>
+              <div class="clinic-distance">Recommended based on your postcode</div>
+            </div>
+          </div>
+          <button class="btn-primary" style="margin-top:12px" onclick="window.open('https://themoleclinic.co.uk/book','_blank')">
+            Book Your Appointment →
+          </button>
+          <button class="btn-secondary" style="margin-top:10px" onclick="window.open('https://themoleclinic.co.uk','_blank')">
+            View All Clinics
+          </button>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Profile Summary -->
+        <div class="animate-in-delay-4">
+          <p class="label">Profile Summary</p>
+          <div class="card" style="margin-bottom:16px">
+            <div class="profile-section">
+              <div class="profile-section-title">Your Details</div>
+              <div class="profile-row"><span class="profile-row-label">Skin Type</span><span class="profile-row-value">${skinTypes.find(s => s.id === state.skinType)?.label || '—'}</span></div>
+              <div class="profile-row"><span class="profile-row-label">Age Range</span><span class="profile-row-value">${state.answers.age ? questions[0].options.find(o => o.value === state.answers.age)?.label : '—'}</span></div>
+              <div class="profile-row"><span class="profile-row-label">Photos Uploaded</span><span class="profile-row-value">${photosCount}</span></div>
+              <div class="profile-row"><span class="profile-row-label">ABCDE Concerns</span><span class="profile-row-value">${abcdeCount} of 5</span></div>
+            </div>
+            <div class="profile-section">
+              <div class="profile-section-title">Key Risk Factors</div>
+              ${getRiskFactors().map(f => `
+                <div class="profile-row">
+                  <span class="profile-row-label">${f.label}</span>
+                  <span class="profile-row-value">${f.value}</span>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+
+        <!-- Share & Remind -->
+        <div class="card" style="margin-bottom:16px">
+          <div class="title-md" style="font-size:16px; margin-bottom:4px">🔔 Set a Reminder</div>
+          <p style="font-size:13px; color:var(--tmc-gray-600); line-height:1.5">We recommend re-checking your skin every 3–6 months. We'll send you a gentle reminder.</p>
+          <div style="display:flex; gap:8px; margin-top:12px">
+            <button class="btn-secondary" style="flex:1; font-size:13px; padding:10px" onclick="alert('Reminder set for 3 months! We\\'ll email you at ${state.email}')">3 months</button>
+            <button class="btn-secondary" style="flex:1; font-size:13px; padding:10px" onclick="alert('Reminder set for 6 months! We\\'ll email you at ${state.email}')">6 months</button>
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom:16px">
+          <div class="title-md" style="font-size:16px; margin-bottom:4px">🤝 Share with Someone</div>
+          <p style="font-size:13px; color:var(--tmc-gray-600); line-height:1.5">Know someone who should check their skin? Share this free tool.</p>
+          <div class="share-row">
+            <button class="share-btn" onclick="shareApp('whatsapp')">WhatsApp</button>
+            <button class="share-btn" onclick="shareApp('email')">Email</button>
+            <button class="share-btn" onclick="shareApp('copy')">Copy Link</button>
+          </div>
+        </div>
+
+        <div class="disclaimer">
+          <strong>Medical Disclaimer:</strong> This profile is not a medical diagnosis. The risk assessment is based on self-reported information and does not replace professional medical advice. Please consult a qualified dermatologist for clinical assessment. The Mole Clinic recommends regular professional skin checks regardless of risk level.
+        </div>
+
+        <div class="trust-badge" style="margin-bottom:40px">
+          🔒 Your data is encrypted and stored in accordance with GDPR
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// ===== CALCULATION LOGIC =====
+
+function calculateRiskScore() {
+  let total = 0;
+  
+  // Questionnaire scores
+  questions.forEach(q => {
+    const answer = state.answers[q.id];
+    if (answer) {
+      const opt = q.options.find(o => o.value === answer);
+      if (opt) total += opt.score;
+    }
+  });
+
+  // Skin type score
+  if (state.skinType) {
+    const st = skinTypes.find(s => s.id === state.skinType);
+    if (st) total += st.score;
+  }
+
+  // ABCDE scores
+  const abcdeCount = Object.values(state.abcdeAnswers).filter(Boolean).length;
+  total += abcdeCount * 4;
+
+  // Normalize to 0-100
+  const maxPossible = 10 + 8 + 10 + 7 + 7 + 5 + 8 + 7 + 9 + 6 + 6 + 6 + 20; // ~109
+  const normalized = Math.round((total / maxPossible) * 100);
+  return Math.min(Math.max(normalized, 5), 95);
+}
+
+function getRiskLevel(score) {
+  if (score < 30) return 'Low';
+  if (score < 60) return 'Moderate';
+  return 'High';
+}
+
+function getRecommendedService() {
+  const rl = state.riskLevel;
+  const changingMoles = state.answers.changing_moles;
+  
+  if (rl === 'High' || changingMoles === 'yes_multiple') {
+    return {
+      name: 'Full Body Mole Check',
+      desc: 'A comprehensive head-to-toe examination by our consultant dermatologists using dermoscopy. Ideal for those with multiple risk factors or changing moles.',
+      price: '£250'
+    };
+  } else if (rl === 'Moderate' || changingMoles === 'yes_one') {
+    return {
+      name: 'Targeted Mole Check',
+      desc: 'A focused examination of specific moles or areas of concern using advanced dermoscopy. Perfect if you have particular moles you\'re worried about.',
+      price: '£150'
+    };
+  } else {
+    return {
+      name: 'Skin Health Screen',
+      desc: 'A quick professional assessment to establish your baseline and set up ongoing monitoring. Great for peace of mind and building good habits.',
+      price: '£100'
+    };
+  }
+}
+
+function getNearestClinic() {
+  const pc = (state.postcode || '').toUpperCase().trim();
+  // Simple postcode-area matching for POC
+  if (pc.startsWith('M') || pc.startsWith('WA') || pc.startsWith('SK') || pc.startsWith('OL') || pc.startsWith('BL') || pc.startsWith('WN') || pc.startsWith('CH') || pc.startsWith('CW')) return clinics.find(c => c.id === 'manchester');
+  if (pc.startsWith('LS') || pc.startsWith('BD') || pc.startsWith('HG') || pc.startsWith('WF') || pc.startsWith('HX') || pc.startsWith('HD')) return clinics.find(c => c.id === 'leeds');
+  if (pc.startsWith('BS') || pc.startsWith('BA') || pc.startsWith('GL') || pc.startsWith('SN')) return clinics.find(c => c.id === 'bristol');
+  if (pc.startsWith('B') && !pc.startsWith('BS') && !pc.startsWith('BD') && !pc.startsWith('BL') && !pc.startsWith('BN') || pc.startsWith('WS') || pc.startsWith('DY') || pc.startsWith('WV') || pc.startsWith('CV')) return clinics.find(c => c.id === 'birmingham');
+  if (pc.startsWith('E') && pc.length > 2 && pc[1] >= '0' && pc[1] <= '9') return clinics.find(c => c.id === 'canarywharf');
+  if (pc.startsWith('EC') || pc.startsWith('E1') || pc.startsWith('E2')) return clinics.find(c => c.id === 'city');
+  if (pc.startsWith('SW') || pc.startsWith('KT') || pc.startsWith('TW')) return clinics.find(c => c.id === 'chelsea');
+  // Default to Marylebone for all other London & elsewhere
+  return clinics.find(c => c.id === 'marylebone');
+}
+
+function getRiskFactors() {
+  const factors = [];
+  
+  const fh = state.answers.family_history;
+  if (fh === 'yes_immediate') factors.push({ label: 'Family History', value: '⚠️ Immediate family' });
+  else if (fh === 'yes_extended') factors.push({ label: 'Family History', value: 'Extended family' });
+  
+  const ph = state.answers.personal_history;
+  if (ph === 'yes_cancer') factors.push({ label: 'Personal History', value: '⚠️ Previous diagnosis' });
+  else if (ph === 'yes_mole') factors.push({ label: 'Personal History', value: 'Mole removed' });
+  
+  const sb = state.answers.sunburn_history;
+  if (sb === 'frequently') factors.push({ label: 'Sunburn History', value: '⚠️ Frequent' });
+  
+  const ow = state.answers.outdoor_work;
+  if (ow === 'both' || ow === 'work_outdoor') factors.push({ label: 'UV Exposure', value: '⚠️ High' });
+  
+  const su = state.answers.sunbed_use;
+  if (su === 'regularly') factors.push({ label: 'Sunbed Use', value: '⚠️ Regular' });
+  
+  const mc = state.answers.mole_count;
+  if (mc === '50plus') factors.push({ label: 'Mole Count', value: '⚠️ 50+' });
+  
+  const cm = state.answers.changing_moles;
+  if (cm === 'yes_multiple' || cm === 'yes_one') factors.push({ label: 'Changing Moles', value: '⚠️ Yes' });
+  
+  const sp = state.answers.sunscreen_use;
+  if (sp === 'rarely') factors.push({ label: 'Sun Protection', value: '⚠️ Rarely used' });
+  
+  if (factors.length === 0) factors.push({ label: 'Overall', value: '✅ No major risk factors identified' });
+  
+  return factors;
+}
+
+// ===== LOADING FLOW =====
+
+function calculateAndShow() {
+  navigate('loading');
+  
+  state.riskScore = calculateRiskScore();
+  state.riskLevel = getRiskLevel(state.riskScore);
+  
+  const messages = [
+    'Analysing your risk factors...',
+    'Reviewing your skin profile...',
+    'Assessing photo data...',
+    'Finding your nearest clinic...',
+    'Building your Mole Clinic Profile...'
+  ];
+  
+  let i = 0;
+  const msgEl = document.getElementById('loadingMsg');
+  const interval = setInterval(() => {
+    i++;
+    if (i < messages.length && msgEl) {
+      msgEl.textContent = messages[i];
+    }
+    if (i >= messages.length - 1) {
+      clearInterval(interval);
+      setTimeout(() => navigate('profile'), 800);
+    }
+  }, 800);
+}
+
+// ===== SHARING =====
+function shareApp(method) {
+  const url = 'https://skincheck.themoleclinic.co.uk';
+  const text = 'I just did a free skin health check with The Mole Clinic. You should check yours too!';
+  
+  if (method === 'whatsapp') {
+    window.open(`https://wa.me/?text=${encodeURIComponent(text + ' ' + url)}`);
+  } else if (method === 'email') {
+    window.open(`mailto:?subject=${encodeURIComponent('Free Skin Health Check')}&body=${encodeURIComponent(text + '\n\n' + url)}`);
+  } else {
+    navigator.clipboard.writeText(url).then(() => alert('Link copied to clipboard!'));
+  }
+}
+
+function removePhoto(region) {
+  delete state.bodyPhotos[region];
+  render();
+}
+
+// ===== EVENT BINDING =====
+function bindEvents() {
+  // Email screen
+  const nameInput = document.getElementById('nameInput');
+  const emailInput = document.getElementById('emailInput');
+  const postcodeInput = document.getElementById('postcodeInput');
+  const emailNext = document.getElementById('emailNext');
+  
+  if (nameInput && emailInput && postcodeInput && emailNext) {
+    const checkEmail = () => {
+      state.name = nameInput.value;
+      state.email = emailInput.value;
+      state.postcode = postcodeInput.value;
+      const valid = state.name.trim() && state.email.includes('@') && state.email.includes('.') && state.postcode.trim().length >= 3;
+      emailNext.disabled = !valid;
+    };
+    nameInput.addEventListener('input', checkEmail);
+    emailInput.addEventListener('input', checkEmail);
+    postcodeInput.addEventListener('input', checkEmail);
+    emailNext.addEventListener('click', () => navigate('consent'));
+  }
+
+  // Consent screen
+  const consentDataEl = document.getElementById('consentData');
+  const consentMarketingEl = document.getElementById('consentMarketing');
+  const consentNext = document.getElementById('consentNext');
+  
+  if (consentDataEl) {
+    consentDataEl.addEventListener('click', () => {
+      state.consentData = !state.consentData;
+      render();
+    });
+  }
+  if (consentMarketingEl) {
+    consentMarketingEl.addEventListener('click', () => {
+      state.consentMarketing = !state.consentMarketing;
+      render();
+    });
+  }
+  if (consentNext) {
+    consentNext.addEventListener('click', () => navigate('skintype'));
+  }
+
+  // Skin type
+  document.querySelectorAll('.skin-type-card').forEach(card => {
+    card.addEventListener('click', () => {
+      state.skinType = parseInt(card.dataset.skin);
+      render();
+    });
+  });
+  const skinNext = document.getElementById('skinNext');
+  if (skinNext) {
+    skinNext.addEventListener('click', () => {
+      state.currentQuestion = 0;
+      navigate('questionnaire');
+    });
+  }
+
+  // Questionnaire
+  document.querySelectorAll('.option-card[data-answer]').forEach(card => {
+    card.addEventListener('click', () => {
+      const q = questions[state.currentQuestion];
+      state.answers[q.id] = card.dataset.answer;
+      render();
+    });
+  });
+  const questionNext = document.getElementById('questionNext');
+  if (questionNext) {
+    questionNext.addEventListener('click', () => {
+      if (state.currentQuestion < questions.length - 1) {
+        state.currentQuestion++;
+        render();
+      } else {
+        navigate('bodymap');
+      }
+    });
+  }
+
+  // Body map
+  document.querySelectorAll('.body-region-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.selectedRegion = btn.dataset.region;
+      navigate('photoUpload');
+    });
+  });
+  const bodyMapNext = document.getElementById('bodyMapNext');
+  if (bodyMapNext) {
+    bodyMapNext.addEventListener('click', () => navigate('abcde'));
+  }
+
+  // Photo upload
+  const photoZone = document.getElementById('photoZone');
+  const photoInput = document.getElementById('photoInput');
+  if (photoZone && photoInput) {
+    photoZone.addEventListener('click', () => photoInput.click());
+    photoInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          state.bodyPhotos[state.selectedRegion] = ev.target.result;
+          render();
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+  }
+
+  // ABCDE
+  document.querySelectorAll('[data-abcde]').forEach(card => {
+    card.addEventListener('click', () => {
+      const letter = card.dataset.abcde;
+      state.abcdeAnswers[letter] = !state.abcdeAnswers[letter];
+      render();
+    });
+  });
+}
+
+// ===== INIT =====
+render();
+</script>
+</body>
+</html>
