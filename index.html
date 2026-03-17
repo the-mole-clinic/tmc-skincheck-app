@@ -384,30 +384,40 @@ body { padding-bottom: env(safe-area-inset-bottom); }
 .risk-nudge-text { font-size: 13px; color: #8b3a2a; line-height: 1.5; }
 
 /* ===== SKIN TYPE ===== */
+/* Monk Skin Tone Scale picker — 5 columns × 2 rows of colour circles */
 .skin-type-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-  margin-top: 16px;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+  margin-top: 20px;
 }
 .skin-type-card {
-  border: 2px solid var(--tmc-gray-200);
-  border-radius: var(--radius-md);
-  padding: 14px 10px;
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
   cursor: pointer;
-  transition: all 0.2s;
+  background: none;
+  border: none;
+  padding: 4px;
 }
-.skin-type-card:hover { border-color: var(--tmc-teal); }
-.skin-type-card.selected { border-color: var(--tmc-teal); background: var(--tmc-teal-light); }
 .skin-swatch {
-  width: 48px; height: 48px;
+  width: 52px; height: 52px;
   border-radius: 50%;
-  margin: 0 auto 8px;
-  border: 2px solid rgba(0,0,0,0.08);
+  border: 3px solid transparent;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+  transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s;
 }
-.skin-type-label { font-size: 12px; font-weight: 600; color: var(--tmc-navy); }
-.skin-type-desc { font-size: 11px; color: var(--tmc-gray-600); margin-top: 2px; line-height: 1.3; }
+.skin-type-card:hover .skin-swatch {
+  transform: scale(1.1);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+}
+.skin-type-card.selected .skin-swatch {
+  border-color: var(--tmc-teal);
+  box-shadow: 0 0 0 3px rgba(46,196,182,0.35), 0 4px 14px rgba(0,0,0,0.22);
+  transform: scale(1.12);
+}
+.skin-type-label { font-size: 10px; font-weight: 500; color: var(--tmc-gray-600); }
 
 /* ===== BODY MAP SVG ===== */
 .body-map-container {
@@ -999,7 +1009,7 @@ body { padding-bottom: env(safe-area-inset-bottom); }
 @media (max-width: 380px) {
   .title-xl { font-size: 26px; }
   .title-lg { font-size: 22px; }
-  .skin-type-grid { grid-template-columns: repeat(2, 1fr); }
+  .skin-type-grid { grid-template-columns: repeat(5, 1fr); }
 }
 </style>
 </head>
@@ -1191,13 +1201,21 @@ const riskNudges = {
 };
 
 // ===== SKIN TYPES =====
+// Monk Skin Tone Scale (MST) — 10 tones developed with Harvard's Ellis Monk for Google.
+// Colour values are the official MST hex codes.
+// fitzpatrickId maps each MST tone to its nearest Fitzpatrick equivalent for internal risk scoring only —
+// the Fitzpatrick scale is never exposed to the user.
 const skinTypes = [
-  { id: 1, label: 'Type I', desc: 'Very fair, always burns, never tans', color: '#FDEBD0', score: 6 },
-  { id: 2, label: 'Type II', desc: 'Fair, burns easily, tans minimally', color: '#F5CBA7', score: 5 },
-  { id: 3, label: 'Type III', desc: 'Medium, sometimes burns, tans gradually', color: '#E0B88A', score: 3 },
-  { id: 4, label: 'Type IV', desc: 'Olive, rarely burns, tans easily', color: '#C49A6C', score: 2 },
-  { id: 5, label: 'Type V', desc: 'Brown, very rarely burns', color: '#9B7653', score: 1 },
-  { id: 6, label: 'Type VI', desc: 'Dark brown/black, never burns', color: '#6B4423', score: 0 },
+  { id: 1,  color: '#f6ede4', fitzpatrickId: 1, score: 6 },
+  { id: 2,  color: '#f3e7db', fitzpatrickId: 1, score: 6 },
+  { id: 3,  color: '#f7ead0', fitzpatrickId: 2, score: 5 },
+  { id: 4,  color: '#eadaba', fitzpatrickId: 3, score: 3 },
+  { id: 5,  color: '#d7bd96', fitzpatrickId: 3, score: 3 },
+  { id: 6,  color: '#a07e56', fitzpatrickId: 4, score: 2 },
+  { id: 7,  color: '#825c43', fitzpatrickId: 5, score: 1 },
+  { id: 8,  color: '#604134', fitzpatrickId: 5, score: 1 },
+  { id: 9,  color: '#3a312a', fitzpatrickId: 6, score: 0 },
+  { id: 10, color: '#15120e', fitzpatrickId: 6, score: 0 },
 ];
 
 // ===== BODY REGIONS =====
@@ -1469,17 +1487,16 @@ function renderSkinType() {
     <div class="screen">
       ${renderHeader()}
       <div class="content animate-in">
-        <h2 class="title-lg">What's your skin type?</h2>
-        <p class="subtitle">Select the Fitzpatrick skin type that best describes your natural skin tone and how it reacts to sun exposure.</p>
+        <h2 class="title-lg">What's your skin tone?</h2>
+        <p class="subtitle">Tap the circle that most closely matches your natural skin tone. There are no right or wrong answers — just pick your closest match.</p>
         <div class="skin-type-grid">
           ${skinTypes.map(st => `
-            <div class="skin-type-card ${state.skinType === st.id ? 'selected' : ''}" data-skin="${st.id}">
+            <div class="skin-type-card ${state.skinType === st.id ? 'selected' : ''}" data-skin="${st.id}" role="radio" aria-checked="${state.skinType === st.id}" aria-label="Skin tone ${st.id} of 10">
               <div class="skin-swatch" style="background:${st.color}"></div>
-              <div class="skin-type-label">${st.label}</div>
-              <div class="skin-type-desc">${st.desc}</div>
             </div>
           `).join('')}
         </div>
+        ${state.skinType ? `<p style="text-align:center;margin-top:16px;font-size:13px;color:var(--tmc-gray-600)">Tone ${state.skinType} of 10 selected ✓</p>` : ''}
       </div>
       <div class="bottom-action">
         <button class="btn-primary" id="skinNext" ${!state.skinType ? 'disabled' : ''}>Continue &#8594;</button>
@@ -1910,7 +1927,7 @@ function renderProfile() {
           <div class="card" style="margin-bottom:16px">
             <div class="profile-section">
               <div class="profile-section-title">Your Details</div>
-              <div class="profile-row"><span class="profile-row-label">Skin Type</span><span class="profile-row-value">${skinTypes.find(s => s.id === state.skinType)?.label || '—'}</span></div>
+              <div class="profile-row"><span class="profile-row-label">Skin Tone</span><span class="profile-row-value" style="display:flex;align-items:center;gap:8px">${(() => { const t = skinTypes.find(s => s.id === state.skinType); return t ? `<span style="display:inline-block;width:20px;height:20px;border-radius:50%;background:${t.color};border:1.5px solid rgba(0,0,0,0.15)"></span><span>Tone ${t.id} of 10</span>` : '—'; })()}</span></div>
               <div class="profile-row"><span class="profile-row-label">Age Range</span><span class="profile-row-value">${state.answers.age ? questions[0].options.find(o => o.value === state.answers.age)?.label : '—'}</span></div>
               <div class="profile-row"><span class="profile-row-label">Photos Uploaded</span><span class="profile-row-value">${photosCount}</span></div>
               <div class="profile-row"><span class="profile-row-label">ABCDE Concerns</span><span class="profile-row-value">${abcdeCount} of 5</span></div>
@@ -2064,7 +2081,8 @@ function getKeyRiskFactorBullets() {
     bullets.push({ text: `ABCDE concerns noted: ${letters}`, low: false });
   }
 
-  if (state.skinType === 1 || state.skinType === 2) bullets.push({ text: 'Fair skin type — higher UV sensitivity', low: false });
+  const selectedTone = skinTypes.find(s => s.id === state.skinType);
+  if (selectedTone && selectedTone.fitzpatrickId <= 2) bullets.push({ text: 'Lighter skin tone — higher UV sensitivity', low: false });
 
   if (bullets.length === 0) bullets.push({ text: 'No major risk factors identified in your profile', low: true });
 
