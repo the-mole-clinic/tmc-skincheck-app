@@ -419,6 +419,176 @@ body { padding-bottom: env(safe-area-inset-bottom); }
 }
 .skin-type-label { font-size: 10px; font-weight: 500; color: var(--tmc-gray-600); }
 
+/* ===== PHOTO MODE SELECTION ===== */
+.photomode-card {
+  border: 2px solid var(--tmc-gray-200);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: var(--tmc-white);
+  position: relative;
+  margin-bottom: 14px;
+}
+.photomode-card:hover { border-color: var(--tmc-teal); }
+.photomode-card.recommended { border-color: var(--tmc-teal); }
+.photomode-badge {
+  position: absolute;
+  top: -11px; left: 20px;
+  background: var(--tmc-teal);
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.03em;
+}
+.photomode-title { font-size: 17px; font-weight: 700; color: var(--tmc-navy); margin-bottom: 6px; }
+.photomode-desc { font-size: 13px; color: var(--tmc-gray-600); line-height: 1.5; }
+
+/* ===== PHOTO TIPS SCREEN ===== */
+.photo-tips-list { margin-top: 20px; display: flex; flex-direction: column; gap: 12px; }
+.photo-tip-row {
+  display: flex; align-items: flex-start; gap: 14px;
+  background: var(--tmc-white);
+  border: 1px solid var(--tmc-gray-200);
+  border-radius: var(--radius-md);
+  padding: 14px;
+}
+.photo-tip-emoji { font-size: 22px; flex-shrink: 0; }
+.photo-tip-body { font-size: 13px; color: var(--tmc-gray-600); line-height: 1.45; }
+.photo-tip-body strong { color: var(--tmc-navy); display: block; margin-bottom: 2px; font-size: 14px; }
+
+/* ===== GUIDED CAPTURE ===== */
+.capture-progress-label {
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--tmc-teal);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+}
+.capture-guide-frame {
+  position: relative;
+  border: 2.5px dashed var(--tmc-teal);
+  border-radius: var(--radius-lg);
+  background: #f0fafa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  margin: 12px 0;
+  min-height: 220px;
+}
+.capture-tick-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(46,196,182,0.12);
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 64px;
+}
+.capture-photo-preview {
+  width: 100%;
+  max-height: 260px;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+}
+.capture-hint {
+  text-align: center;
+  font-size: 12px;
+  color: var(--tmc-gray-400);
+  margin-top: 4px;
+  font-style: italic;
+}
+.capture-btn {
+  display: block;
+  width: 100%;
+  padding: 18px;
+  font-size: 17px;
+  font-weight: 700;
+  background: var(--tmc-teal);
+  color: white;
+  border: none;
+  border-radius: var(--radius-xl);
+  cursor: pointer;
+  margin-top: 16px;
+  letter-spacing: 0.01em;
+}
+.capture-btn:hover { background: var(--tmc-teal-dark); }
+.capture-skip {
+  display: block;
+  text-align: center;
+  font-size: 13px;
+  color: var(--tmc-gray-400);
+  margin-top: 14px;
+  cursor: pointer;
+  text-decoration: underline;
+  background: none;
+  border: none;
+  width: 100%;
+}
+.capture-retake {
+  display: inline-block;
+  font-size: 13px;
+  color: var(--tmc-gray-600);
+  cursor: pointer;
+  text-decoration: underline;
+  background: none;
+  border: none;
+  margin-top: 10px;
+  text-align: center;
+  width: 100%;
+}
+
+/* ===== FULL BODY SUMMARY ===== */
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 16px;
+}
+.summary-thumb {
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  border: 2px solid var(--tmc-gray-200);
+  position: relative;
+  aspect-ratio: 3/4;
+  background: var(--tmc-gray-100);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.summary-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.summary-thumb.has-photo { border-color: var(--tmc-teal); }
+.summary-thumb-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--tmc-gray-600);
+  text-align: center;
+  padding: 4px;
+  background: rgba(255,255,255,0.9);
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+}
+.summary-thumb-empty { font-size: 22px; margin-bottom: 4px; opacity: 0.3; }
+.summary-thumb-retake {
+  position: absolute;
+  top: 4px; right: 4px;
+  background: rgba(0,0,0,0.55);
+  color: white;
+  border: none;
+  border-radius: 20px;
+  font-size: 10px;
+  padding: 2px 7px;
+  cursor: pointer;
+}
+
 /* ===== BODY MAP SVG ===== */
 .body-map-container {
   display: flex;
@@ -1051,6 +1221,9 @@ const state = {
   navDirection: 'forward', // 'forward' | 'back'
   history: ['welcome'],
   abcdeAnswers: {},
+  photoMode: null,        // 'fullbody' | 'specific'
+  fullBodyStep: 0,        // 0–5 (index into fullBodySteps)
+  fullBodyPhotos: [null, null, null, null, null, null],
 };
 
 // ===== CLINICS DATA =====
@@ -1220,16 +1393,29 @@ const skinTypes = [
 
 // ===== BODY REGIONS =====
 const bodyRegions = [
-  { id: 'head_face', label: 'Head & Face' },
-  { id: 'neck', label: 'Neck' },
-  { id: 'chest', label: 'Chest' },
-  { id: 'back', label: 'Back' },
-  { id: 'abdomen', label: 'Abdomen' },
-  { id: 'left_arm', label: 'Left Arm' },
-  { id: 'right_arm', label: 'Right Arm' },
-  { id: 'left_leg', label: 'Left Leg' },
-  { id: 'right_leg', label: 'Right Leg' },
-  { id: 'hands_feet', label: 'Hands & Feet' },
+  { id: 'head_face',   label: 'Head & Face' },
+  { id: 'neck',        label: 'Neck' },
+  { id: 'chest',       label: 'Chest' },
+  { id: 'abdomen',     label: 'Abdomen' },
+  { id: 'upper_back',  label: 'Upper Back' },
+  { id: 'lower_back',  label: 'Lower Back' },
+  { id: 'left_arm',    label: 'Left Arm' },
+  { id: 'right_arm',   label: 'Right Arm' },
+  { id: 'left_hand',   label: 'Left Hand' },
+  { id: 'right_hand',  label: 'Right Hand' },
+  { id: 'left_leg',    label: 'Left Leg' },
+  { id: 'right_leg',   label: 'Right Leg' },
+  { id: 'left_foot',   label: 'Left Foot' },
+  { id: 'right_foot',  label: 'Right Foot' },
+];
+
+const fullBodySteps = [
+  { id: 'body_front', label: 'Full Body — Front', instruction: 'Stand 2 metres away and take a full front photo', hint: 'Ask someone to help — aim to fill the outline with your silhouette', svgType: 'front' },
+  { id: 'body_back',  label: 'Full Body — Back',  instruction: 'Now turn around for your back photo', hint: 'Same distance — 2 metres. Ideal to ask a friend or family member', svgType: 'back' },
+  { id: 'left_arm',   label: 'Left Arm',          instruction: 'Photograph both the inner and outer sides of your left arm', hint: 'Hold your arm straight — include from shoulder to wrist', svgType: 'arm' },
+  { id: 'right_arm',  label: 'Right Arm',         instruction: 'Photograph both the inner and outer sides of your right arm', hint: 'Hold your arm straight — include from shoulder to wrist', svgType: 'arm' },
+  { id: 'left_leg',   label: 'Left Leg',          instruction: 'Photograph the front and back of your left leg', hint: 'From hip to foot — include the back of the knee and lower leg', svgType: 'leg' },
+  { id: 'right_leg',  label: 'Right Leg',         instruction: 'Photograph the front and back of your right leg', hint: 'From hip to foot — include the back of the knee and lower leg', svgType: 'leg' },
 ];
 
 // ===== ABCDE =====
@@ -1253,6 +1439,10 @@ function render() {
     case 'consent': html = renderConsent(); break;
     case 'skintype': html = renderSkinType(); break;
     case 'questionnaire': html = renderQuestionnaire(); break;
+    case 'bodymapselect': html = renderBodyMapSelect(); break;
+    case 'phototips': html = renderPhotoTips(); break;
+    case 'fullbodycapture': html = renderFullBodyCapture(); break;
+    case 'fullbodysummary': html = renderFullBodySummary(); break;
     case 'bodymap': html = renderBodyMap(); break;
     case 'photoUpload': html = renderPhotoUpload(); break;
     case 'abcde': html = renderABCDE(); break;
@@ -1306,13 +1496,18 @@ function goBack() {
 }
 
 function getProgress() {
-  const screens = ['welcome','email','consent','skintype','questionnaire','bodymap','abcde','loading','profile'];
+  const screens = ['welcome','email','consent','skintype','questionnaire','bodymapselect','abcde','loading','profile'];
   if (state.screen === 'questionnaire') {
     const base = 4 / 9;
     const qProgress = (state.currentQuestion / questions.length) * (1/9);
     return Math.round((base + qProgress) * 100);
   }
-  if (state.screen === 'photoUpload') return 65;
+  if (['phototips','fullbodycapture','fullbodysummary','bodymap','photoUpload'].includes(state.screen)) {
+    if (state.screen === 'fullbodycapture') {
+      return Math.round((5/9 + (state.fullBodyStep / fullBodySteps.length) * (1/9)) * 100);
+    }
+    return 65;
+  }
   const idx = screens.indexOf(state.screen);
   return Math.round((Math.max(idx,0) / (screens.length - 1)) * 100);
 }
@@ -1329,7 +1524,10 @@ function getProgressLabel() {
   const labels = {
     welcome: '', email: 'Step 1 of 6 — Your Details', consent: 'Step 1 of 6 — Consent',
     skintype: 'Step 2 of 6 — Skin Type', questionnaire: `Step 3 of 6 — Question ${state.currentQuestion + 1} of ${questions.length}`,
-    bodymap: 'Step 4 of 6 — Body Map', photoUpload: 'Step 4 of 6 — Photo Upload',
+    bodymapselect: 'Step 4 of 6 — Photo Capture', phototips: 'Step 4 of 6 — Photo Tips',
+    fullbodycapture: `Step 4 of 6 — Photo ${state.fullBodyStep + 1} of ${fullBodySteps.length}`,
+    fullbodysummary: 'Step 4 of 6 — Photo Summary',
+    bodymap: 'Step 4 of 6 — Specific Areas', photoUpload: 'Step 4 of 6 — Photo Upload',
     abcde: 'Step 5 of 6 — Self Check',
     loading: 'Building your profile...', profile: 'Your Mole Clinic Profile',
   };
@@ -1342,7 +1540,7 @@ function renderFooter() {
 
 function renderHeader(showBack = true) {
   if (state.screen === 'welcome' || state.screen === 'profile') return '';
-  const showMicrocopy = ['questionnaire','skintype','bodymap','abcde'].includes(state.screen);
+  const showMicrocopy = ['questionnaire','skintype','bodymapselect','bodymap','abcde'].includes(state.screen);
   return `
     <div class="header">
       ${showBack ? '<button class="header-back" onclick="goBack()">&#8592;</button>' : '<div></div>'}
@@ -1540,6 +1738,225 @@ function renderQuestionnaire() {
   `;
 }
 
+// ===== CAPTURE GUIDE SVGs =====
+function getCaptureSVG(type) {
+  // All silhouettes are gender-neutral line drawings, navy stroke on light teal bg
+  const bodyFrontPaths = `
+    <ellipse cx="100" cy="26" rx="23" ry="21" fill="none" stroke="#1a2332" stroke-width="1.8"/>
+    <rect x="89" y="46" width="22" height="17" rx="4" fill="none" stroke="#1a2332" stroke-width="1.6"/>
+    <path d="M 44 63 Q 44 59 60 58 L 88 56 L 112 56 L 140 58 Q 156 59 156 63 L 153 118 L 47 118 Z" fill="none" stroke="#1a2332" stroke-width="1.6"/>
+    <path d="M 47 67 Q 40 70 36 82 L 32 156 Q 31 163 39 165 Q 47 167 49 159 L 52 118" fill="none" stroke="#1a2332" stroke-width="1.6"/>
+    <path d="M 153 67 Q 160 70 164 82 L 168 156 Q 169 163 161 165 Q 153 167 151 159 L 148 118" fill="none" stroke="#1a2332" stroke-width="1.6"/>
+    <ellipse cx="30" cy="169" rx="9" ry="7" fill="none" stroke="#1a2332" stroke-width="1.4"/>
+    <ellipse cx="170" cy="169" rx="9" ry="7" fill="none" stroke="#1a2332" stroke-width="1.4"/>
+    <path d="M 47 118 L 47 182 Q 49 200 62 204 L 138 204 Q 151 200 153 182 L 153 118 Z" fill="none" stroke="#1a2332" stroke-width="1.6"/>
+    <path d="M 62 204 Q 52 207 49 218 L 47 229 L 153 229 L 151 218 Q 148 207 138 204 Z" fill="none" stroke="#1a2332" stroke-width="1.6"/>
+    <path d="M 47 229 L 43 318 Q 42 331 55 333 Q 68 335 71 321 L 77 229 Z" fill="none" stroke="#1a2332" stroke-width="1.6"/>
+    <path d="M 153 229 L 157 318 Q 158 331 145 333 Q 132 335 129 321 L 123 229 Z" fill="none" stroke="#1a2332" stroke-width="1.6"/>
+    <ellipse cx="50" cy="337" rx="13" ry="6" fill="none" stroke="#1a2332" stroke-width="1.4"/>
+    <ellipse cx="150" cy="337" rx="13" ry="6" fill="none" stroke="#1a2332" stroke-width="1.4"/>
+  `;
+  const bodyBackPaths = `
+    <ellipse cx="100" cy="26" rx="23" ry="21" fill="none" stroke="#1a2332" stroke-width="1.8"/>
+    <rect x="89" y="46" width="22" height="17" rx="4" fill="none" stroke="#1a2332" stroke-width="1.6"/>
+    <path d="M 44 63 Q 44 59 60 58 L 88 56 L 112 56 L 140 58 Q 156 59 156 63 L 153 118 L 47 118 Z" fill="none" stroke="#1a2332" stroke-width="1.6"/>
+    <line x1="100" y1="63" x2="100" y2="204" stroke="#1a2332" stroke-width="1" stroke-dasharray="5,4" opacity="0.5"/>
+    <path d="M 47 67 Q 40 70 36 82 L 32 156 Q 31 163 39 165 Q 47 167 49 159 L 52 118" fill="none" stroke="#1a2332" stroke-width="1.6"/>
+    <path d="M 153 67 Q 160 70 164 82 L 168 156 Q 169 163 161 165 Q 153 167 151 159 L 148 118" fill="none" stroke="#1a2332" stroke-width="1.6"/>
+    <ellipse cx="30" cy="169" rx="9" ry="7" fill="none" stroke="#1a2332" stroke-width="1.4"/>
+    <ellipse cx="170" cy="169" rx="9" ry="7" fill="none" stroke="#1a2332" stroke-width="1.4"/>
+    <path d="M 47 118 L 47 182 Q 49 200 62 204 L 138 204 Q 151 200 153 182 L 153 118 Z" fill="none" stroke="#1a2332" stroke-width="1.6"/>
+    <path d="M 62 204 Q 52 207 49 218 L 47 229 L 153 229 L 151 218 Q 148 207 138 204 Z" fill="none" stroke="#1a2332" stroke-width="1.6"/>
+    <path d="M 47 229 L 43 318 Q 42 331 55 333 Q 68 335 71 321 L 77 229 Z" fill="none" stroke="#1a2332" stroke-width="1.6"/>
+    <path d="M 153 229 L 157 318 Q 158 331 145 333 Q 132 335 129 321 L 123 229 Z" fill="none" stroke="#1a2332" stroke-width="1.6"/>
+    <ellipse cx="50" cy="337" rx="13" ry="6" fill="none" stroke="#1a2332" stroke-width="1.4"/>
+    <ellipse cx="150" cy="337" rx="13" ry="6" fill="none" stroke="#1a2332" stroke-width="1.4"/>
+  `;
+  const armPaths = `
+    <ellipse cx="90" cy="22" rx="28" ry="18" fill="none" stroke="#1a2332" stroke-width="1.8"/>
+    <path d="M 64 36 L 58 140 Q 57 150 70 152 Q 83 154 86 142 L 90 90 L 90 90 L 94 142 Q 97 154 110 152 Q 123 150 122 140 L 116 36 Z" fill="none" stroke="#1a2332" stroke-width="1.6"/>
+    <path d="M 60 138 Q 90 148 120 138" fill="none" stroke="#1a2332" stroke-width="1" stroke-dasharray="4,3" opacity="0.6"/>
+    <path d="M 60 150 L 55 225 Q 54 236 68 238 L 112 238 Q 126 236 125 225 L 120 150 Z" fill="none" stroke="#1a2332" stroke-width="1.6"/>
+    <ellipse cx="90" cy="244" rx="24" ry="11" fill="none" stroke="#1a2332" stroke-width="1.4"/>
+  `;
+  const legPaths = `
+    <ellipse cx="90" cy="20" rx="34" ry="17" fill="none" stroke="#1a2332" stroke-width="1.8"/>
+    <path d="M 58 32 L 52 162 Q 51 172 65 175 Q 79 177 82 165 L 86 95 L 94 95 L 98 165 Q 101 177 115 175 Q 129 172 128 162 L 122 32 Z" fill="none" stroke="#1a2332" stroke-width="1.6"/>
+    <path d="M 54 160 Q 90 172 126 160" fill="none" stroke="#1a2332" stroke-width="1" stroke-dasharray="4,3" opacity="0.6"/>
+    <path d="M 54 173 L 50 268 Q 49 278 64 280 L 116 280 Q 131 278 130 268 L 126 173 Z" fill="none" stroke="#1a2332" stroke-width="1.6"/>
+    <ellipse cx="68" cy="288" rx="22" ry="9" fill="none" stroke="#1a2332" stroke-width="1.4"/>
+    <ellipse cx="112" cy="288" rx="22" ry="9" fill="none" stroke="#1a2332" stroke-width="1.4"/>
+  `;
+  switch(type) {
+    case 'front': return `<svg viewBox="0 0 200 352" width="140" height="246" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Front body silhouette">${bodyFrontPaths}</svg>`;
+    case 'back':  return `<svg viewBox="0 0 200 352" width="140" height="246" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Back body silhouette">${bodyBackPaths}</svg>`;
+    case 'arm':   return `<svg viewBox="0 0 180 260" width="120" height="173" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Arm silhouette">${armPaths}</svg>`;
+    case 'leg':   return `<svg viewBox="0 0 180 300" width="110" height="183" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Leg silhouette">${legPaths}</svg>`;
+    default:      return `<svg viewBox="0 0 200 352" width="140" height="246" xmlns="http://www.w3.org/2000/svg">${bodyFrontPaths}</svg>`;
+  }
+}
+
+// ===== BODY MAP SELECT (entry screen for photo section) =====
+function renderBodyMapSelect() {
+  return `
+    <div class="screen">
+      ${renderHeader()}
+      <div class="content animate-in">
+        <h2 class="title-lg">Let's photograph your skin</h2>
+        <p class="subtitle">Choose how you'd like to capture your photos. Both options are free — choose whichever suits you best.</p>
+
+        <div style="margin-top:24px">
+          <div class="photomode-card recommended" data-mode="fullbody" id="cardFullBody">
+            <div class="photomode-badge">&#10024; Recommended</div>
+            <div class="photomode-title">&#128247; Full Body Capture</div>
+            <div class="photomode-desc">6 guided photos covering your whole body. Takes about 3 minutes. Gives us the most complete picture for your profile.</div>
+          </div>
+
+          <div class="photomode-card" data-mode="specific" id="cardSpecific">
+            <div class="photomode-title">&#127919; Specific Areas Only</div>
+            <div class="photomode-desc">Upload photos of particular moles or areas you're concerned about. Best if you have specific spots you'd like included in your profile.</div>
+          </div>
+        </div>
+
+        <p style="font-size:12px;color:var(--tmc-gray-400);text-align:center;margin-top:8px">You can skip photo capture entirely — your risk profile will still be generated</p>
+      </div>
+      <div class="bottom-action">
+        <button class="btn-secondary" onclick="navigate('abcde')" style="font-size:13px;padding:12px">Skip photos &mdash; go straight to results</button>
+      </div>
+      ${renderFooter()}
+    </div>
+  `;
+}
+
+// ===== PHOTO TIPS =====
+function renderPhotoTips() {
+  const isFullBody = state.photoMode === 'fullbody';
+  return `
+    <div class="screen">
+      ${renderHeader()}
+      <div class="content animate-in">
+        <h2 class="title-lg">📸 Photo tips</h2>
+        <p class="subtitle">A few quick tips to get the best photos for your profile.</p>
+
+        <div class="photo-tips-list">
+          <div class="photo-tip-row">
+            <div class="photo-tip-emoji">💡</div>
+            <div class="photo-tip-body"><strong>Good, even lighting</strong>Natural daylight or a well-lit room works best. Avoid shadows and harsh flash.</div>
+          </div>
+          ${isFullBody ? `
+          <div class="photo-tip-row">
+            <div class="photo-tip-emoji">👕</div>
+            <div class="photo-tip-body"><strong>Wear minimal clothing</strong>For body shots, the less clothing the better — this helps us see as much skin as possible.</div>
+          </div>
+          <div class="photo-tip-row">
+            <div class="photo-tip-emoji">📏</div>
+            <div class="photo-tip-body"><strong>Stand 2 metres away</strong>For full body photos, stand roughly 2 metres from the camera. Ask someone to help if you can.</div>
+          </div>
+          ` : ''}
+          <div class="photo-tip-row">
+            <div class="photo-tip-emoji">🎯</div>
+            <div class="photo-tip-body"><strong>For close-ups: 15–30cm</strong>Hold your phone 15–30cm from the mole or area of concern. Keep it centred and in focus.</div>
+          </div>
+          <div class="photo-tip-row">
+            <div class="photo-tip-emoji">🪙</div>
+            <div class="photo-tip-body"><strong>Use a coin for scale</strong>Place a 1p coin next to any mole you're photographing — this helps us understand its size.</div>
+          </div>
+          <div class="photo-tip-row">
+            <div class="photo-tip-emoji">🤝</div>
+            <div class="photo-tip-body"><strong>Ask someone to help</strong>For back photos, it really helps to have a friend or family member take the photo for you.</div>
+          </div>
+        </div>
+      </div>
+      <div class="bottom-action">
+        <button class="btn-primary" id="tipsGotIt">Got it, let's start &#8594;</button>
+      </div>
+      ${renderFooter()}
+    </div>
+  `;
+}
+
+// ===== FULL BODY GUIDED CAPTURE =====
+function renderFullBodyCapture() {
+  const step = fullBodySteps[state.fullBodyStep];
+  const photo = state.fullBodyPhotos[state.fullBodyStep];
+  const stepNum = state.fullBodyStep + 1;
+  const total = fullBodySteps.length;
+  return `
+    <div class="screen">
+      ${renderHeader()}
+      <div class="content animate-in">
+        <div class="capture-progress-label">Photo ${stepNum} of ${total} — ${step.label}</div>
+        <h2 class="title-lg" style="margin-top:4px">${step.instruction}</h2>
+
+        <div class="capture-guide-frame">
+          ${photo
+            ? `<img src="${photo}" alt="Captured photo" class="capture-photo-preview">`
+            : getCaptureSVG(step.svgType)
+          }
+          ${photo ? `<div class="capture-tick-overlay">✅</div>` : ''}
+        </div>
+        ${!photo ? `<p class="capture-hint">${step.hint}</p>` : ''}
+
+        <input type="file" id="photoInputFull" accept="image/*" capture="environment" style="display:none">
+
+        ${photo ? `
+          <button class="btn-primary" id="captureNext">
+            ${stepNum < total ? 'Next Photo &#8594;' : 'View Summary &#8594;'}
+          </button>
+          <button class="capture-retake" id="captureRetake">Retake this photo</button>
+        ` : `
+          <button class="capture-btn" id="captureShoot">&#128247; Take Photo</button>
+          <button class="capture-skip" id="captureSkip">Skip this step</button>
+        `}
+      </div>
+      ${renderFooter()}
+    </div>
+  `;
+}
+
+// ===== FULL BODY SUMMARY =====
+function renderFullBodySummary() {
+  const takenCount = state.fullBodyPhotos.filter(p => p !== null).length;
+  return `
+    <div class="screen">
+      ${renderHeader()}
+      <div class="content animate-in">
+        <h2 class="title-lg">📷 Photo summary</h2>
+        <p class="subtitle">${takenCount === 6
+          ? 'Great — you\'ve completed all 6 photos! Tap any photo to retake it.'
+          : `You've taken ${takenCount} of 6 photos. You can retake any photo or continue with what you have.`
+        }</p>
+
+        <div class="summary-grid">
+          ${fullBodySteps.map((step, i) => {
+            const photo = state.fullBodyPhotos[i];
+            return `
+              <div class="summary-thumb ${photo ? 'has-photo' : ''}" data-retake="${i}">
+                ${photo
+                  ? `<img src="${photo}" alt="${step.label}">
+                     <button class="summary-thumb-retake" data-retake="${i}">Retake</button>`
+                  : `<div class="summary-thumb-empty">📷</div>`
+                }
+                <div class="summary-thumb-label">${step.label.replace('Full Body — ', '')}</div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+
+        ${takenCount === 0 ? `
+          <div style="margin-top:16px;padding:14px;background:var(--tmc-coral-light);border-radius:var(--radius-md);font-size:13px;color:var(--tmc-gray-600)">
+            ℹ️ No photos taken — that's OK. Your risk profile will still be generated from your questionnaire answers.
+          </div>` : ''}
+      </div>
+      <div class="bottom-action">
+        <button class="btn-primary" onclick="navigate('abcde')">Continue to Self-Check &#8594;</button>
+        <button class="btn-secondary" style="margin-top:10px" onclick="navigate('fullbodycapture');state.fullBodyStep=0;render()">Retake from start</button>
+      </div>
+      ${renderFooter()}
+    </div>
+  `;
+}
+
 // ===== BODY MAP SVG =====
 function renderBodyMapSVG() {
   const photos = state.bodyPhotos;
@@ -1621,25 +2038,23 @@ function renderBodyMapSVG() {
   `;
 }
 
-// ===== BODY MAP SCREEN =====
+// ===== SPECIFIC AREAS BODY MAP =====
 function renderBodyMap() {
   const photosCount = Object.keys(state.bodyPhotos).length;
   return `
     <div class="screen">
       ${renderHeader()}
       <div class="content-tight animate-in">
-        <h2 class="title-lg">Map your moles</h2>
-        <p class="subtitle-sm">Tap a body area to upload a photo of any moles or areas of concern. Upload at least one photo to continue.</p>
+        <h2 class="title-lg">Check specific areas</h2>
+        <p class="subtitle-sm">Tap a body region to photograph any moles or areas of concern. Upload at least one photo to continue, or skip ahead.</p>
 
         <div class="body-map-container">
           ${renderBodyMapSVG()}
           <div class="body-map-count">${photosCount > 0 ? `${photosCount} area${photosCount > 1 ? 's' : ''} photographed` : 'Tap a region to add a photo'}</div>
         </div>
-
-        <p style="font-size:12px;color:var(--tmc-gray-400);text-align:center;margin-top:4px">Note: Back is captured via the body regions above</p>
       </div>
       <div class="bottom-action">
-        <button class="btn-primary" id="bodyMapNext" ${photosCount === 0 ? 'disabled' : ''}>Continue to Self-Check &#8594;</button>
+        <button class="btn-primary" id="bodyMapNext">${photosCount > 0 ? 'Continue to Self-Check &#8594;' : 'Skip &#8594;'}</button>
       </div>
       ${renderFooter()}
     </div>
@@ -2249,12 +2664,97 @@ function bindEvents() {
         state.currentQuestion++;
         render();
       } else {
+        navigate('bodymapselect');
+      }
+    });
+  }
+
+  // Body map mode selection cards
+  document.querySelectorAll('.photomode-card[data-mode]').forEach(card => {
+    card.addEventListener('click', () => {
+      state.photoMode = card.dataset.mode;
+      navigate('phototips');
+    });
+  });
+
+  // Photo tips continue button
+  const tipsGotIt = document.getElementById('tipsGotIt');
+  if (tipsGotIt) {
+    tipsGotIt.addEventListener('click', () => {
+      if (state.photoMode === 'fullbody') {
+        state.fullBodyStep = 0;
+        navigate('fullbodycapture');
+      } else {
         navigate('bodymap');
       }
     });
   }
 
-  // Body map SVG regions
+  // Full body capture — take photo button
+  const captureShoot = document.getElementById('captureShoot');
+  const photoInputFull = document.getElementById('photoInputFull');
+  if (captureShoot && photoInputFull) {
+    captureShoot.addEventListener('click', () => photoInputFull.click());
+    photoInputFull.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          state.fullBodyPhotos[state.fullBodyStep] = ev.target.result;
+          render();
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+  }
+
+  // Full body capture — next button
+  const captureNext = document.getElementById('captureNext');
+  if (captureNext) {
+    captureNext.addEventListener('click', () => {
+      if (state.fullBodyStep < fullBodySteps.length - 1) {
+        state.fullBodyStep++;
+        render();
+      } else {
+        navigate('fullbodysummary');
+      }
+    });
+  }
+
+  // Full body capture — retake button (clears photo and re-renders same step)
+  const captureRetake = document.getElementById('captureRetake');
+  if (captureRetake) {
+    captureRetake.addEventListener('click', () => {
+      state.fullBodyPhotos[state.fullBodyStep] = null;
+      render();
+    });
+  }
+
+  // Full body capture — skip button
+  const captureSkip = document.getElementById('captureSkip');
+  if (captureSkip) {
+    captureSkip.addEventListener('click', () => {
+      if (state.fullBodyStep < fullBodySteps.length - 1) {
+        state.fullBodyStep++;
+        render();
+      } else {
+        navigate('fullbodysummary');
+      }
+    });
+  }
+
+  // Full body summary — retake individual step
+  document.querySelectorAll('[data-retake]').forEach(el => {
+    el.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const idx = parseInt(el.dataset.retake);
+      state.fullBodyPhotos[idx] = null;
+      state.fullBodyStep = idx;
+      navigate('fullbodycapture');
+    });
+  });
+
+  // Specific areas — body map SVG regions
   document.querySelectorAll('.body-region-area[data-region]').forEach(el => {
     el.addEventListener('click', () => {
       state.selectedRegion = el.dataset.region;
@@ -2266,7 +2766,7 @@ function bindEvents() {
     bodyMapNext.addEventListener('click', () => navigate('abcde'));
   }
 
-  // Photo upload
+  // Specific areas — photo upload
   const photoZone = document.getElementById('photoZone');
   const photoInput = document.getElementById('photoInput');
   if (photoZone && photoInput) {
