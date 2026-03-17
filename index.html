@@ -53,8 +53,7 @@ html, body {
 }
 
 body { padding-bottom: env(safe-area-inset-bottom); }
-
-#app { min-height: 100vh; }
+#app { min-height: 100vh; overflow: hidden; }
 
 /* ===== ANIMATIONS ===== */
 @keyframes fadeInUp {
@@ -66,16 +65,28 @@ body { padding-bottom: env(safe-area-inset-bottom); }
   to { opacity: 1; }
 }
 @keyframes slideInRight {
-  from { opacity: 0; transform: translateX(40px); }
+  from { opacity: 0; transform: translateX(48px); }
   to { opacity: 1; transform: translateX(0); }
 }
 @keyframes slideInLeft {
-  from { opacity: 0; transform: translateX(-40px); }
+  from { opacity: 0; transform: translateX(-48px); }
   to { opacity: 1; transform: translateX(0); }
+}
+@keyframes slideOutLeft {
+  from { opacity: 1; transform: translateX(0); }
+  to { opacity: 0; transform: translateX(-48px); }
+}
+@keyframes slideOutRight {
+  from { opacity: 1; transform: translateX(0); }
+  to { opacity: 0; transform: translateX(48px); }
 }
 @keyframes pulse {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.05); }
+}
+@keyframes pulseCTA {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(46,196,182,0.5); }
+  50% { box-shadow: 0 0 0 10px rgba(46,196,182,0); }
 }
 @keyframes shimmer {
   0% { background-position: -200% 0; }
@@ -85,13 +96,27 @@ body { padding-bottom: env(safe-area-inset-bottom); }
   0%, 100% { box-shadow: 0 0 0 0 rgba(46, 196, 182, 0.3); }
   50% { box-shadow: 0 0 0 12px rgba(46, 196, 182, 0); }
 }
-@keyframes checkmark {
-  0% { stroke-dashoffset: 24; }
-  100% { stroke-dashoffset: 0; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes scanLine {
+  0% { transform: translateY(0); opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(180px); opacity: 0; }
+}
+@keyframes bodyPulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+@keyframes gaugeIn {
+  from { stroke-dashoffset: var(--gauge-full); }
+  to { stroke-dashoffset: var(--gauge-target); }
 }
 @keyframes scaleIn {
   from { opacity: 0; transform: scale(0.9); }
   to { opacity: 1; transform: scale(1); }
+}
+@keyframes nudgeIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .animate-in { animation: fadeInUp 0.5s ease-out forwards; }
@@ -99,6 +124,10 @@ body { padding-bottom: env(safe-area-inset-bottom); }
 .animate-in-delay-2 { animation: fadeInUp 0.5s ease-out 0.2s forwards; opacity: 0; }
 .animate-in-delay-3 { animation: fadeInUp 0.5s ease-out 0.3s forwards; opacity: 0; }
 .animate-in-delay-4 { animation: fadeInUp 0.5s ease-out 0.4s forwards; opacity: 0; }
+.animate-in-delay-5 { animation: fadeInUp 0.5s ease-out 0.5s forwards; opacity: 0; }
+
+.screen-slide-right { animation: slideInRight 0.35s cubic-bezier(0.4,0,0.2,1) forwards; }
+.screen-slide-left { animation: slideInLeft 0.35s cubic-bezier(0.4,0,0.2,1) forwards; }
 
 /* ===== SCREEN WRAPPER ===== */
 .screen {
@@ -160,10 +189,18 @@ body { padding-bottom: env(safe-area-inset-bottom); }
   font-size: 12px;
   color: var(--tmc-gray-400);
   text-align: center;
-  padding: 8px 20px 0;
+  padding: 6px 20px 0;
   font-weight: 500;
   letter-spacing: 0.5px;
   text-transform: uppercase;
+}
+.progress-microcopy {
+  font-size: 12px;
+  color: var(--tmc-teal-dark);
+  text-align: center;
+  padding: 3px 20px 6px;
+  font-weight: 500;
+  font-style: italic;
 }
 
 /* ===== CONTENT ===== */
@@ -296,7 +333,7 @@ body { padding-bottom: env(safe-area-inset-bottom); }
   position: relative;
 }
 
-/* ===== OPTION CARDS (for questionnaire) ===== */
+/* ===== OPTION CARDS ===== */
 .option-card {
   background: var(--tmc-white);
   border: 2px solid var(--tmc-gray-200);
@@ -310,10 +347,7 @@ body { padding-bottom: env(safe-area-inset-bottom); }
   margin-bottom: 10px;
 }
 .option-card:hover { border-color: var(--tmc-teal); background: var(--tmc-teal-light); }
-.option-card.selected {
-  border-color: var(--tmc-teal);
-  background: var(--tmc-teal-light);
-}
+.option-card.selected { border-color: var(--tmc-teal); background: var(--tmc-teal-light); }
 .option-card .radio {
   width: 22px; height: 22px;
   border-radius: 50%;
@@ -324,10 +358,7 @@ body { padding-bottom: env(safe-area-inset-bottom); }
   justify-content: center;
   transition: all 0.2s;
 }
-.option-card.selected .radio {
-  border-color: var(--tmc-teal);
-  background: var(--tmc-teal);
-}
+.option-card.selected .radio { border-color: var(--tmc-teal); background: var(--tmc-teal); }
 .option-card.selected .radio::after {
   content: '';
   width: 8px; height: 8px;
@@ -337,7 +368,22 @@ body { padding-bottom: env(safe-area-inset-bottom); }
 .option-label { font-size: 15px; font-weight: 500; color: var(--tmc-navy); }
 .option-desc { font-size: 13px; color: var(--tmc-gray-600); margin-top: 2px; }
 
-/* ===== FITZPATRICK SKIN TYPE ===== */
+/* ===== RISK NUDGE ===== */
+.risk-nudge {
+  background: var(--tmc-coral-light);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  margin-top: 4px;
+  margin-bottom: 10px;
+  animation: nudgeIn 0.3s ease-out;
+}
+.risk-nudge-icon { font-size: 16px; flex-shrink: 0; line-height: 1.4; }
+.risk-nudge-text { font-size: 13px; color: #8b3a2a; line-height: 1.5; }
+
+/* ===== SKIN TYPE ===== */
 .skin-type-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -363,80 +409,44 @@ body { padding-bottom: env(safe-area-inset-bottom); }
 .skin-type-label { font-size: 12px; font-weight: 600; color: var(--tmc-navy); }
 .skin-type-desc { font-size: 11px; color: var(--tmc-gray-600); margin-top: 2px; line-height: 1.3; }
 
-/* ===== BODY MAP ===== */
+/* ===== BODY MAP SVG ===== */
 .body-map-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
   margin-top: 16px;
 }
 .body-map-svg {
   width: 200px;
   cursor: pointer;
+  overflow: visible;
 }
-.body-map-svg .body-outline {
-  fill: #f0e6da;
-  stroke: var(--tmc-gray-300);
-  stroke-width: 1.5;
-}
-.body-map-svg .hotspot {
+.body-region-area {
   fill: transparent;
   stroke: none;
   cursor: pointer;
   transition: fill 0.2s;
 }
-.body-map-svg .hotspot:hover { fill: rgba(46, 196, 182, 0.15); }
-.body-map-svg .marker {
-  fill: var(--tmc-coral);
-  stroke: white;
-  stroke-width: 2;
+.body-region-area:hover { fill: rgba(46,196,182,0.18); }
+.body-region-area.has-photo { fill: rgba(46,196,182,0.22); }
+.body-outline-path {
+  fill: #f5ede4;
+  stroke: var(--tmc-navy);
+  stroke-width: 1.5;
+  stroke-linejoin: round;
 }
-.body-map-svg .marker-pulse {
-  fill: var(--tmc-coral);
-  opacity: 0.3;
-  animation: breathe 2s infinite;
-}
-.body-region-list {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
-  width: 100%;
-  margin-top: 8px;
-}
-.body-region-btn {
-  padding: 12px 14px;
-  background: var(--tmc-white);
-  border: 2px solid var(--tmc-gray-200);
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  font-family: var(--font-body);
+.body-map-count {
   font-size: 13px;
-  font-weight: 500;
-  color: var(--tmc-navy);
-  transition: all 0.2s;
+  color: var(--tmc-teal-dark);
+  font-weight: 600;
   text-align: center;
 }
-.body-region-btn:hover { border-color: var(--tmc-teal); }
-.body-region-btn.has-photo {
-  border-color: var(--tmc-teal);
-  background: var(--tmc-teal-light);
-  position: relative;
-}
-.body-region-btn.has-photo::after {
-  content: '✓';
-  position: absolute;
-  top: -6px;
-  right: -6px;
-  width: 20px;
-  height: 20px;
-  background: var(--tmc-teal);
-  color: white;
-  border-radius: 50%;
-  font-size: 11px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.region-dot {
+  fill: var(--tmc-teal);
+  stroke: white;
+  stroke-width: 1.5;
+  pointer-events: none;
 }
 
 /* ===== PHOTO UPLOAD ===== */
@@ -469,10 +479,8 @@ body { padding-bottom: env(safe-area-inset-bottom); }
 }
 .photo-preview-remove {
   position: absolute;
-  top: 8px;
-  right: 8px;
-  width: 28px;
-  height: 28px;
+  top: 8px; right: 8px;
+  width: 28px; height: 28px;
   background: rgba(0,0,0,0.6);
   color: white;
   border: none;
@@ -484,7 +492,7 @@ body { padding-bottom: env(safe-area-inset-bottom); }
   justify-content: center;
 }
 
-/* ===== ABCDE GUIDE ===== */
+/* ===== ABCDE ===== */
 .abcde-cards { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
 .abcde-card {
   display: flex;
@@ -494,10 +502,11 @@ body { padding-bottom: env(safe-area-inset-bottom); }
   border-radius: var(--radius-md);
   padding: 16px;
   border: 1px solid var(--tmc-gray-200);
+  transition: border-color 0.2s;
 }
+.abcde-card.checked { border-color: var(--tmc-coral); background: #fff8f6; }
 .abcde-letter {
-  width: 40px;
-  height: 40px;
+  width: 40px; height: 40px;
   border-radius: 50%;
   background: var(--tmc-navy);
   color: white;
@@ -508,11 +517,13 @@ body { padding-bottom: env(safe-area-inset-bottom); }
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  transition: background 0.2s;
 }
+.abcde-card.checked .abcde-letter { background: var(--tmc-coral); }
 .abcde-title { font-size: 14px; font-weight: 600; color: var(--tmc-navy); }
 .abcde-desc { font-size: 13px; color: var(--tmc-gray-600); margin-top: 2px; line-height: 1.4; }
 
-/* ===== CONSENT CHECKBOX ===== */
+/* ===== CONSENT ===== */
 .consent-row {
   display: flex;
   align-items: flex-start;
@@ -520,8 +531,7 @@ body { padding-bottom: env(safe-area-inset-bottom); }
   margin-top: 16px;
 }
 .consent-checkbox {
-  width: 22px;
-  height: 22px;
+  width: 22px; height: 22px;
   border: 2px solid var(--tmc-gray-300);
   border-radius: 4px;
   flex-shrink: 0;
@@ -532,32 +542,14 @@ body { padding-bottom: env(safe-area-inset-bottom); }
   transition: all 0.2s;
   margin-top: 2px;
 }
-.consent-checkbox.checked {
-  background: var(--tmc-teal);
-  border-color: var(--tmc-teal);
-}
-.consent-checkbox.checked::after {
-  content: '✓';
-  color: white;
-  font-size: 14px;
-  font-weight: 700;
-}
-.consent-text {
-  font-size: 13px;
-  color: var(--tmc-gray-600);
-  line-height: 1.5;
-}
+.consent-checkbox.checked { background: var(--tmc-teal); border-color: var(--tmc-teal); }
+.consent-checkbox.checked::after { content: '✓'; color: white; font-size: 14px; font-weight: 700; }
+.consent-text { font-size: 13px; color: var(--tmc-gray-600); line-height: 1.5; }
 .consent-text a { color: var(--tmc-teal); text-decoration: underline; }
 
-/* ===== INPUT FIELDS ===== */
+/* ===== INPUTS ===== */
 .input-group { margin-bottom: 16px; }
-.input-label {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--tmc-navy);
-  margin-bottom: 6px;
-  display: block;
-}
+.input-label { font-size: 14px; font-weight: 600; color: var(--tmc-navy); margin-bottom: 6px; display: block; }
 .input-field {
   width: 100%;
   padding: 14px 16px;
@@ -572,29 +564,8 @@ body { padding-bottom: env(safe-area-inset-bottom); }
 .input-field:focus { outline: none; border-color: var(--tmc-teal); }
 .input-field::placeholder { color: var(--tmc-gray-400); }
 
-/* ===== RISK SCORE VISUAL ===== */
-.risk-gauge {
-  width: 200px;
-  height: 100px;
-  margin: 20px auto;
-  position: relative;
-}
-.risk-gauge-bg {
-  fill: none;
-  stroke: var(--tmc-gray-200);
-  stroke-width: 12;
-}
-.risk-gauge-fill {
-  fill: none;
-  stroke-width: 12;
-  stroke-linecap: round;
-  transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.risk-gauge-label {
-  font-family: var(--font-display);
-  font-size: 28px;
-  font-weight: 700;
-}
+/* ===== RISK GAUGE ===== */
+.risk-gauge-wrap { text-align: center; margin: 8px 0 4px; }
 
 /* ===== CLINIC CARDS ===== */
 .clinic-card {
@@ -607,13 +578,11 @@ body { padding-bottom: env(safe-area-inset-bottom); }
   align-items: center;
   margin-bottom: 10px;
   transition: all 0.2s;
-  cursor: pointer;
 }
 .clinic-card:hover { border-color: var(--tmc-teal); box-shadow: var(--shadow-sm); }
 .clinic-card.recommended { border: 2px solid var(--tmc-teal); }
 .clinic-icon {
-  width: 44px;
-  height: 44px;
+  width: 44px; height: 44px;
   background: var(--tmc-teal-light);
   border-radius: var(--radius-sm);
   display: flex;
@@ -634,64 +603,87 @@ body { padding-bottom: env(safe-area-inset-bottom); }
   margin-left: auto;
   white-space: nowrap;
 }
+.clinic-book-btn {
+  background: var(--tmc-teal);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 8px 14px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+.clinic-book-btn:hover { background: var(--tmc-teal-dark); }
 
-/* ===== SERVICE RECOMMENDATION ===== */
+/* ===== SERVICE CARD ===== */
 .service-card {
   background: linear-gradient(135deg, var(--tmc-navy), var(--tmc-navy-light));
   border-radius: var(--radius-lg);
   padding: 24px;
   color: white;
   margin-bottom: 16px;
+  position: relative;
+  overflow: hidden;
 }
-.service-card .service-name {
-  font-family: var(--font-display);
-  font-size: 22px;
-  font-weight: 600;
-  margin-bottom: 8px;
+.service-card::before {
+  content: '';
+  position: absolute;
+  top: -40px; right: -40px;
+  width: 160px; height: 160px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(46,196,182,0.12) 0%, transparent 70%);
 }
-.service-card .service-desc {
-  font-size: 14px;
-  opacity: 0.8;
-  line-height: 1.5;
-}
-.service-card .service-price {
-  font-family: var(--font-display);
-  font-size: 24px;
+.service-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
   font-weight: 700;
-  color: var(--tmc-gold);
-  margin-top: 12px;
-}
-
-/* ===== PROFILE SUMMARY ===== */
-.profile-section {
-  margin-bottom: 20px;
-}
-.profile-section-title {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--tmc-gray-400);
+  letter-spacing: 0.5px;
   text-transform: uppercase;
-  letter-spacing: 1.2px;
   margin-bottom: 10px;
 }
-.profile-row {
-  display: flex;
-  justify-content: space-between;
-  padding: 10px 0;
-  border-bottom: 1px solid var(--tmc-gray-100);
-  font-size: 14px;
-}
+.service-badge-recommended { background: var(--tmc-teal); color: white; }
+.service-badge-popular { background: var(--tmc-gold); color: var(--tmc-navy); }
+.service-name { font-family: var(--font-display); font-size: 22px; font-weight: 600; margin-bottom: 8px; }
+.service-desc { font-size: 14px; opacity: 0.82; line-height: 1.55; }
+.service-price { font-family: var(--font-display); font-size: 26px; font-weight: 700; color: var(--tmc-gold); margin-top: 14px; }
+
+/* ===== PROFILE SUMMARY ===== */
+.profile-section { margin-bottom: 20px; }
+.profile-section-title { font-size: 12px; font-weight: 700; color: var(--tmc-gray-400); text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 10px; }
+.profile-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--tmc-gray-100); font-size: 14px; }
 .profile-row-label { color: var(--tmc-gray-600); }
 .profile-row-value { font-weight: 600; color: var(--tmc-navy); }
 
-/* ===== TAGS ===== */
-.tag {
-  display: inline-block;
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
+/* ===== KEY RISK FACTORS LIST ===== */
+.risk-factors-list { margin-top: 12px; }
+.risk-factor-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--tmc-gray-100);
+  font-size: 14px;
+  color: var(--tmc-navy);
 }
+.risk-factor-item:last-child { border-bottom: none; }
+.risk-factor-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--tmc-coral);
+  flex-shrink: 0;
+  margin-top: 5px;
+}
+.risk-factor-dot.low { background: var(--tmc-teal); }
+
+/* ===== TAGS ===== */
+.tag { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
 .tag-low { background: #e8f5e9; color: #2e7d32; }
 .tag-moderate { background: #fff3e0; color: #e65100; }
 .tag-high { background: #fce4ec; color: #c62828; }
@@ -709,26 +701,21 @@ body { padding-bottom: env(safe-area-inset-bottom); }
 .welcome-hero::before {
   content: '';
   position: absolute;
-  top: -50%;
-  right: -20%;
-  width: 300px;
-  height: 300px;
+  top: -50%; right: -20%;
+  width: 300px; height: 300px;
   border-radius: 50%;
   background: radial-gradient(circle, rgba(46,196,182,0.15) 0%, transparent 70%);
 }
 .welcome-hero::after {
   content: '';
   position: absolute;
-  bottom: -30%;
-  left: -10%;
-  width: 250px;
-  height: 250px;
+  bottom: -30%; left: -10%;
+  width: 250px; height: 250px;
   border-radius: 50%;
   background: radial-gradient(circle, rgba(224,122,95,0.1) 0%, transparent 70%);
 }
 .welcome-hero-icon {
-  width: 72px;
-  height: 72px;
+  width: 72px; height: 72px;
   background: rgba(255,255,255,0.1);
   border-radius: 50%;
   display: flex;
@@ -740,35 +727,32 @@ body { padding-bottom: env(safe-area-inset-bottom); }
   position: relative;
   z-index: 1;
 }
-.welcome-hero .title-xl {
-  color: white;
+.welcome-hero .title-xl { color: white; position: relative; z-index: 1; }
+.welcome-hero .subtitle { color: rgba(255,255,255,0.78); position: relative; z-index: 1; }
+.welcome-stat {
+  display: inline-block;
+  background: rgba(255,255,255,0.12);
+  border-radius: var(--radius-sm);
+  padding: 8px 14px;
+  font-size: 13px;
+  color: rgba(255,255,255,0.9);
+  margin-top: 16px;
   position: relative;
   z-index: 1;
+  backdrop-filter: blur(4px);
 }
-.welcome-hero .subtitle {
-  color: rgba(255,255,255,0.75);
+.welcome-social-proof {
+  font-size: 13px;
+  color: rgba(255,255,255,0.7);
+  margin-top: 10px;
   position: relative;
   z-index: 1;
 }
 
-/* ===== FEATURES LIST ===== */
+/* ===== FEATURE LIST ===== */
 .feature-list { margin-top: 24px; }
-.feature-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 14px;
-  padding: 14px 0;
-}
-.feature-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: var(--radius-sm);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  flex-shrink: 0;
-}
+.feature-item { display: flex; align-items: flex-start; gap: 14px; padding: 14px 0; }
+.feature-icon { width: 40px; height: 40px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
 .feature-icon-teal { background: var(--tmc-teal-light); }
 .feature-icon-coral { background: var(--tmc-coral-light); }
 .feature-icon-gold { background: #fdf5e6; }
@@ -793,57 +777,59 @@ body { padding-bottom: env(safe-area-inset-bottom); }
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 60vh;
+  min-height: 70vh;
   text-align: center;
   padding: 40px 24px;
 }
-.loading-spinner {
-  width: 56px;
-  height: 56px;
-  border: 3px solid var(--tmc-gray-200);
-  border-top-color: var(--tmc-teal);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-  margin-bottom: 24px;
+.loading-body-wrap {
+  position: relative;
+  width: 100px;
+  height: 200px;
+  margin-bottom: 28px;
 }
-@keyframes spin { to { transform: rotate(360deg); } }
-.loading-messages { margin-top: 12px; }
+.loading-scan-line {
+  position: absolute;
+  left: 0; top: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--tmc-teal), transparent);
+  border-radius: 2px;
+  animation: scanLine 1.8s ease-in-out infinite;
+  box-shadow: 0 0 8px var(--tmc-teal);
+}
+.loading-body-svg { animation: bodyPulse 1.8s ease-in-out infinite; }
 .loading-msg {
-  font-size: 14px;
+  font-size: 15px;
   color: var(--tmc-gray-600);
-  animation: fadeIn 0.5s ease-out;
+  animation: fadeIn 0.4s ease-out;
+  min-height: 22px;
 }
 
-/* ===== SHARE BUTTON ===== */
-.share-row {
-  display: flex;
-  gap: 10px;
-  margin-top: 16px;
-}
+/* ===== SHARE BUTTONS ===== */
+.share-row { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
 .share-btn {
   flex: 1;
-  padding: 12px;
+  min-width: 70px;
+  padding: 11px 8px;
   border-radius: var(--radius-sm);
   border: 1px solid var(--tmc-gray-200);
   background: var(--tmc-white);
   cursor: pointer;
   font-family: var(--font-body);
-  font-size: 13px;
-  font-weight: 500;
+  font-size: 12px;
+  font-weight: 600;
   color: var(--tmc-navy);
   transition: all 0.2s;
   text-align: center;
 }
 .share-btn:hover { border-color: var(--tmc-teal); background: var(--tmc-teal-light); }
+.share-btn-wa { border-color: #25d366; color: #128c4e; }
+.share-btn-wa:hover { background: #f0faf4; }
 
 /* ===== DIVIDER ===== */
-.divider {
-  height: 1px;
-  background: var(--tmc-gray-200);
-  margin: 20px 0;
-}
+.divider { height: 1px; background: var(--tmc-gray-200); margin: 20px 0; }
 
-/* ===== BADGE ===== */
+/* ===== TRUST BADGE ===== */
 .trust-badge {
   display: flex;
   align-items: center;
@@ -853,10 +839,16 @@ body { padding-bottom: env(safe-area-inset-bottom); }
   margin-top: 16px;
   justify-content: center;
 }
-.trust-badge-icon {
-  width: 16px;
-  height: 16px;
-  color: var(--tmc-teal);
+.trustpilot-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #00b67a;
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 4px;
 }
 
 /* ===== MODAL ===== */
@@ -885,29 +877,123 @@ body { padding-bottom: env(safe-area-inset-bottom); }
   to { transform: translateY(0); }
 }
 .modal-handle {
-  width: 40px;
-  height: 4px;
+  width: 40px; height: 4px;
   background: var(--tmc-gray-300);
   border-radius: 2px;
   margin: 0 auto 20px;
 }
 
 /* ===== PHOTO TIPS ===== */
-.photo-tips {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-  margin-top: 16px;
-}
-.photo-tip {
-  background: var(--tmc-white);
-  border: 1px solid var(--tmc-gray-200);
-  border-radius: var(--radius-sm);
-  padding: 14px;
-  text-align: center;
-}
+.photo-tips { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 16px; }
+.photo-tip { background: var(--tmc-white); border: 1px solid var(--tmc-gray-200); border-radius: var(--radius-sm); padding: 14px; text-align: center; }
 .photo-tip-icon { font-size: 24px; margin-bottom: 6px; }
 .photo-tip-text { font-size: 12px; color: var(--tmc-gray-600); line-height: 1.3; }
+
+/* ===== STICKY BOOKING BAR ===== */
+.sticky-booking-bar {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: var(--tmc-navy);
+  z-index: 150;
+  padding: 12px 16px;
+  padding-bottom: calc(12px + env(safe-area-inset-bottom));
+  max-width: 480px;
+  margin: 0 auto;
+}
+.sticky-booking-bar-inner {
+  max-width: 480px;
+  margin: 0 auto;
+}
+.sticky-booking-trust {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+.sticky-trust-item {
+  font-size: 11px;
+  color: rgba(255,255,255,0.7);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.sticky-trust-item::before { content: '✓'; color: var(--tmc-teal); font-weight: 700; }
+.sticky-availability {
+  font-size: 12px;
+  color: var(--tmc-gold);
+  text-align: center;
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+.sticky-urgency {
+  font-size: 11px;
+  color: rgba(255,255,255,0.65);
+  text-align: center;
+  margin-bottom: 8px;
+  font-style: italic;
+}
+.sticky-book-btn {
+  width: 100%;
+  padding: 15px 20px;
+  background: var(--tmc-teal);
+  color: white;
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: 700;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  animation: pulseCTA 2.5s ease-in-out infinite;
+  transition: background 0.2s;
+  letter-spacing: 0.2px;
+}
+.sticky-book-btn:hover { background: var(--tmc-teal-dark); animation: none; }
+
+/* ===== RESULTS CONTENT PAD ===== */
+.results-content {
+  flex: 1;
+  padding: 24px 20px 220px;
+  overflow-y: auto;
+}
+
+/* ===== WHAT THIS MEANS CARD ===== */
+.means-card {
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  margin-bottom: 16px;
+}
+.means-card.low { background: #e8f5e9; border: 1px solid #c8e6c9; }
+.means-card.moderate { background: #fff3e0; border: 1px solid #ffe0b2; }
+.means-card.high { background: #fce4ec; border: 1px solid #f8bbd0; }
+.means-card p { font-size: 14px; line-height: 1.65; color: var(--tmc-navy); }
+
+/* ===== EMAIL CONFIRMATION ===== */
+.email-confirm-card {
+  background: var(--tmc-teal-light);
+  border: 1px solid rgba(46,196,182,0.3);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  font-size: 13px;
+  color: var(--tmc-teal-dark);
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+.email-confirm-icon { font-size: 18px; flex-shrink: 0; }
+
+/* ===== FOOTER ===== */
+.screen-footer {
+  text-align: center;
+  padding: 12px 20px 8px;
+  font-size: 11px;
+  color: var(--tmc-gray-400);
+  border-top: 1px solid var(--tmc-gray-200);
+  margin-top: auto;
+}
+.screen-footer a { color: var(--tmc-gray-400); text-decoration: none; }
+.screen-footer a:hover { color: var(--tmc-teal); }
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 380px) {
@@ -920,10 +1006,26 @@ body { padding-bottom: env(safe-area-inset-bottom); }
 <body>
 <div id="app"></div>
 
+<!-- Sticky booking bar (shown on profile only) -->
+<div id="stickyBar" style="display:none">
+  <div class="sticky-booking-bar">
+    <div class="sticky-booking-bar-inner">
+      <div class="sticky-trust-item" style="display:flex;gap:16px;justify-content:center;margin-bottom:6px;flex-wrap:wrap">
+        <span style="font-size:11px;color:rgba(255,255,255,0.7)">✓ Consultant dermatologist</span>
+        <span style="font-size:11px;color:rgba(255,255,255,0.7)">✓ Advanced dermoscopy</span>
+        <span style="font-size:11px;color:rgba(255,255,255,0.7)">✓ Results same day</span>
+      </div>
+      <div class="sticky-availability">Next available: This week</div>
+      <div id="stickyUrgency" class="sticky-urgency" style="display:none">Based on your risk profile, we recommend booking within the next 2 weeks</div>
+      <button class="sticky-book-btn" id="stickyBookBtn" onclick="window.open('https://themoleclinic.co.uk/book','_blank')">Book at — →</button>
+    </div>
+  </div>
+</div>
+
 <script>
 // ===== APP STATE =====
 const state = {
-  screen: 'welcome', // welcome, email, consent, skintype, questionnaire, bodymap, photoUpload, abcde, loading, profile
+  screen: 'welcome',
   email: '',
   name: '',
   postcode: '',
@@ -936,22 +1038,21 @@ const state = {
   selectedRegion: null,
   riskScore: null,
   riskLevel: null,
-  profileSummary: null,
-  photoTipsShown: false,
-  abcdeAnswers: {},
+  navDirection: 'forward', // 'forward' | 'back'
   history: ['welcome'],
+  abcdeAnswers: {},
 };
 
 // ===== CLINICS DATA =====
 const clinics = [
-  { name: 'London — Marylebone', postcode: 'W1', distance: null, id: 'marylebone' },
-  { name: 'London — City', postcode: 'EC2', distance: null, id: 'city' },
-  { name: 'London — Chelsea', postcode: 'SW3', distance: null, id: 'chelsea' },
-  { name: 'London — Canary Wharf', postcode: 'E14', distance: null, id: 'canarywharf' },
-  { name: 'Manchester', postcode: 'M2', distance: null, id: 'manchester' },
-  { name: 'Leeds', postcode: 'LS1', distance: null, id: 'leeds' },
-  { name: 'Bristol', postcode: 'BS1', distance: null, id: 'bristol' },
-  { name: 'Birmingham', postcode: 'B2', distance: null, id: 'birmingham' },
+  { name: 'London Marylebone', area: 'W1', postcodes: ['W1','NW','WC'], id: 'marylebone', bookUrl: 'https://themoleclinic.co.uk/book' },
+  { name: 'London City', area: 'EC', postcodes: ['EC','E1','E2'], id: 'city', bookUrl: 'https://themoleclinic.co.uk/book' },
+  { name: 'London Chelsea', area: 'SW', postcodes: ['SW','KT','TW'], id: 'chelsea', bookUrl: 'https://themoleclinic.co.uk/book' },
+  { name: 'London Canary Wharf', area: 'E14', postcodes: ['E14','E'], id: 'canarywharf', bookUrl: 'https://themoleclinic.co.uk/book' },
+  { name: 'Manchester', area: 'M', postcodes: ['M','WA','SK','OL','BL','WN'], id: 'manchester', bookUrl: 'https://themoleclinic.co.uk/book' },
+  { name: 'Leeds', area: 'LS', postcodes: ['LS','BD','HG','WF','HX','HD'], id: 'leeds', bookUrl: 'https://themoleclinic.co.uk/book' },
+  { name: 'Bristol', area: 'BS', postcodes: ['BS','BA','GL','SN'], id: 'bristol', bookUrl: 'https://themoleclinic.co.uk/book' },
+  { name: 'Birmingham', area: 'B', postcodes: ['B','WS','DY','WV','CV'], id: 'birmingham', bookUrl: 'https://themoleclinic.co.uk/book' },
 ];
 
 // ===== QUESTIONNAIRE =====
@@ -1073,7 +1174,23 @@ const questions = [
   },
 ];
 
-// ===== SKIN TYPES (Fitzpatrick) =====
+// ===== RISK NUDGES =====
+const riskNudges = {
+  family_history: {
+    yes_immediate: "Family history is one of the strongest risk indicators. Regular professional checks are especially important."
+  },
+  changing_moles: {
+    yes_multiple: "Changes in multiple moles should always be assessed by a specialist."
+  },
+  sunbed_use: {
+    regularly: "Regular sunbed use significantly increases skin cancer risk. A professional baseline check is recommended."
+  },
+  sunburn_history: {
+    frequently: "Frequent severe sunburn is a significant risk factor for melanoma."
+  }
+};
+
+// ===== SKIN TYPES =====
 const skinTypes = [
   { id: 1, label: 'Type I', desc: 'Very fair, always burns, never tans', color: '#FDEBD0', score: 6 },
   { id: 2, label: 'Type II', desc: 'Fair, burns easily, tans minimally', color: '#F5CBA7', score: 5 },
@@ -1085,21 +1202,21 @@ const skinTypes = [
 
 // ===== BODY REGIONS =====
 const bodyRegions = [
-  { id: 'head_face', label: 'Head & Face', emoji: '😊' },
-  { id: 'neck', label: 'Neck', emoji: '🧣' },
-  { id: 'chest', label: 'Chest', emoji: '👕' },
-  { id: 'back', label: 'Back', emoji: '🔙' },
-  { id: 'abdomen', label: 'Abdomen', emoji: '🫄' },
-  { id: 'left_arm', label: 'Left Arm', emoji: '💪' },
-  { id: 'right_arm', label: 'Right Arm', emoji: '💪' },
-  { id: 'left_leg', label: 'Left Leg', emoji: '🦵' },
-  { id: 'right_leg', label: 'Right Leg', emoji: '🦵' },
-  { id: 'hands', label: 'Hands & Feet', emoji: '🤲' },
+  { id: 'head_face', label: 'Head & Face' },
+  { id: 'neck', label: 'Neck' },
+  { id: 'chest', label: 'Chest' },
+  { id: 'back', label: 'Back' },
+  { id: 'abdomen', label: 'Abdomen' },
+  { id: 'left_arm', label: 'Left Arm' },
+  { id: 'right_arm', label: 'Right Arm' },
+  { id: 'left_leg', label: 'Left Leg' },
+  { id: 'right_leg', label: 'Right Leg' },
+  { id: 'hands_feet', label: 'Hands & Feet' },
 ];
 
-// ===== ABCDE Items =====
+// ===== ABCDE =====
 const abcdeItems = [
-  { letter: 'A', title: 'Asymmetry', desc: 'One half of the mole doesn\'t match the other half.' },
+  { letter: 'A', title: 'Asymmetry', desc: "One half of the mole doesn't match the other half." },
   { letter: 'B', title: 'Border', desc: 'The edges are irregular, ragged, blurred, or notched.' },
   { letter: 'C', title: 'Colour', desc: 'The colour is not uniform — shades of brown, black, red, white, or blue.' },
   { letter: 'D', title: 'Diameter', desc: 'The mole is larger than 6mm (about the size of a pencil eraser).' },
@@ -1109,23 +1226,51 @@ const abcdeItems = [
 // ===== RENDER ENGINE =====
 function render() {
   const app = document.getElementById('app');
+  const dirClass = state.navDirection === 'back' ? 'screen-slide-left' : 'screen-slide-right';
+
+  let html = '';
   switch(state.screen) {
-    case 'welcome': app.innerHTML = renderWelcome(); break;
-    case 'email': app.innerHTML = renderEmail(); break;
-    case 'consent': app.innerHTML = renderConsent(); break;
-    case 'skintype': app.innerHTML = renderSkinType(); break;
-    case 'questionnaire': app.innerHTML = renderQuestionnaire(); break;
-    case 'bodymap': app.innerHTML = renderBodyMap(); break;
-    case 'photoUpload': app.innerHTML = renderPhotoUpload(); break;
-    case 'phototips': app.innerHTML = renderPhotoTips(); break;
-    case 'abcde': app.innerHTML = renderABCDE(); break;
-    case 'loading': app.innerHTML = renderLoading(); break;
-    case 'profile': app.innerHTML = renderProfile(); break;
+    case 'welcome': html = renderWelcome(); break;
+    case 'email': html = renderEmail(); break;
+    case 'consent': html = renderConsent(); break;
+    case 'skintype': html = renderSkinType(); break;
+    case 'questionnaire': html = renderQuestionnaire(); break;
+    case 'bodymap': html = renderBodyMap(); break;
+    case 'photoUpload': html = renderPhotoUpload(); break;
+    case 'abcde': html = renderABCDE(); break;
+    case 'loading': html = renderLoading(); break;
+    case 'profile': html = renderProfile(); break;
+    default: html = renderWelcome();
   }
+
+  app.innerHTML = `<div class="${dirClass}">${html}</div>`;
+
+  // Show/hide sticky bar
+  const stickyBar = document.getElementById('stickyBar');
+  if (stickyBar) {
+    stickyBar.style.display = state.screen === 'profile' ? 'block' : 'none';
+    if (state.screen === 'profile') {
+      const clinic = getNearestClinic();
+      const btn = document.getElementById('stickyBookBtn');
+      if (btn) btn.textContent = `Book at ${clinic.name} \u2192`;
+      const urgency = document.getElementById('stickyUrgency');
+      if (urgency) urgency.style.display = (state.riskLevel === 'Moderate' || state.riskLevel === 'High') ? 'block' : 'none';
+    }
+  }
+
   bindEvents();
+
+  // Post-render: animate gauge
+  if (state.screen === 'profile') {
+    setTimeout(() => animateGauge(), 100);
+  }
+  if (state.screen === 'loading') {
+    startLoadingMessages();
+  }
 }
 
 function navigate(screen) {
+  state.navDirection = 'forward';
   state.history.push(screen);
   state.screen = screen;
   window.scrollTo(0, 0);
@@ -1134,22 +1279,32 @@ function navigate(screen) {
 
 function goBack() {
   if (state.history.length > 1) {
+    state.navDirection = 'back';
     state.history.pop();
     state.screen = state.history[state.history.length - 1];
+    window.scrollTo(0, 0);
     render();
   }
 }
 
 function getProgress() {
-  const screens = ['welcome','email','consent','skintype','questionnaire','bodymap','phototips','abcde','loading','profile'];
-  const idx = screens.indexOf(state.screen);
+  const screens = ['welcome','email','consent','skintype','questionnaire','bodymap','abcde','loading','profile'];
   if (state.screen === 'questionnaire') {
-    const base = 4 / 10;
-    const qProgress = (state.currentQuestion / questions.length) * (1/10);
+    const base = 4 / 9;
+    const qProgress = (state.currentQuestion / questions.length) * (1/9);
     return Math.round((base + qProgress) * 100);
   }
   if (state.screen === 'photoUpload') return 65;
-  return Math.round((idx / (screens.length - 1)) * 100);
+  const idx = screens.indexOf(state.screen);
+  return Math.round((Math.max(idx,0) / (screens.length - 1)) * 100);
+}
+
+function getProgressMicrocopy() {
+  const p = getProgress();
+  if (p <= 25) return 'Great start — just a few more questions';
+  if (p <= 50) return "You're halfway there";
+  if (p <= 75) return 'Your profile is taking shape';
+  return 'Nearly done — your results are almost ready';
 }
 
 function getProgressLabel() {
@@ -1157,53 +1312,60 @@ function getProgressLabel() {
     welcome: '', email: 'Step 1 of 6 — Your Details', consent: 'Step 1 of 6 — Consent',
     skintype: 'Step 2 of 6 — Skin Type', questionnaire: `Step 3 of 6 — Question ${state.currentQuestion + 1} of ${questions.length}`,
     bodymap: 'Step 4 of 6 — Body Map', photoUpload: 'Step 4 of 6 — Photo Upload',
-    phototips: 'Step 5 of 6 — Photo Tips', abcde: 'Step 5 of 6 — Self Check',
+    abcde: 'Step 5 of 6 — Self Check',
     loading: 'Building your profile...', profile: 'Your Mole Clinic Profile',
   };
   return labels[state.screen] || '';
 }
 
+function renderFooter() {
+  return `<div class="screen-footer">Powered by <a href="https://themoleclinic.co.uk" target="_blank">The Mole Clinic</a> &middot; themoleclinic.co.uk</div>`;
+}
+
 function renderHeader(showBack = true) {
   if (state.screen === 'welcome' || state.screen === 'profile') return '';
+  const showMicrocopy = ['questionnaire','skintype','bodymap','abcde'].includes(state.screen);
   return `
     <div class="header">
-      ${showBack ? '<button class="header-back" onclick="goBack()">←</button>' : '<div></div>'}
+      ${showBack ? '<button class="header-back" onclick="goBack()">&#8592;</button>' : '<div></div>'}
       <div class="header-logo">The Mole <span>Clinic</span></div>
       <div style="width:36px"></div>
     </div>
     <div class="progress-bar"><div class="progress-fill" style="width:${getProgress()}%"></div></div>
     <div class="progress-label">${getProgressLabel()}</div>
+    ${showMicrocopy ? `<div class="progress-microcopy">${getProgressMicrocopy()}</div>` : ''}
   `;
 }
 
-// ===== SCREEN RENDERERS =====
-
+// ===== WELCOME =====
 function renderWelcome() {
   return `
     <div class="screen">
       <div class="welcome-hero animate-in">
-        <div class="welcome-hero-icon">🔬</div>
+        <div class="welcome-hero-icon">&#128302;</div>
         <h1 class="title-xl">Free Skin<br>Health Check</h1>
         <p class="subtitle">Get your personalised Mole Clinic Profile in minutes. Know your risk. Know your next step.</p>
+        <div class="welcome-stat animate-in-delay-1">&#128300; Over 16,000 people are diagnosed with melanoma in the UK each year.</div>
+        <div class="welcome-social-proof animate-in-delay-2">Join 5,000+ people who've used this free tool</div>
       </div>
       <div class="content">
         <div class="feature-list">
           <div class="feature-item animate-in-delay-1">
-            <div class="feature-icon feature-icon-teal">📋</div>
+            <div class="feature-icon feature-icon-teal">&#128203;</div>
             <div>
               <div class="feature-title">Risk Profile Assessment</div>
               <div class="feature-desc">Quick questions about your skin, lifestyle, and family history</div>
             </div>
           </div>
           <div class="feature-item animate-in-delay-2">
-            <div class="feature-icon feature-icon-coral">📸</div>
+            <div class="feature-icon feature-icon-coral">&#128247;</div>
             <div>
               <div class="feature-title">Photo Upload</div>
               <div class="feature-desc">Map and photograph moles or areas of concern</div>
             </div>
           </div>
           <div class="feature-item animate-in-delay-3">
-            <div class="feature-icon feature-icon-gold">📊</div>
+            <div class="feature-icon feature-icon-gold">&#128202;</div>
             <div>
               <div class="feature-title">Your Mole Clinic Profile</div>
               <div class="feature-desc">Personalised risk summary with recommended next steps and nearest clinic</div>
@@ -1214,48 +1376,53 @@ function renderWelcome() {
           <strong>Important:</strong> This is not a medical diagnosis. This tool helps you understand your skin cancer risk factors and recommends appropriate professional skin checks.
         </div>
         <div class="trust-badge animate-in-delay-4">
-          🔒 Your data is encrypted and stored securely
+          &#128274; Your data is encrypted and stored securely
         </div>
       </div>
       <div class="bottom-action">
-        <button class="btn-primary" onclick="navigate('email')">Start Your Free Check →</button>
+        <button class="btn-primary" onclick="navigate('email')">Start Your Free Check &#8594;</button>
       </div>
+      ${renderFooter()}
     </div>
   `;
 }
 
+// ===== EMAIL =====
 function renderEmail() {
   return `
     <div class="screen">
       ${renderHeader()}
       <div class="content animate-in">
         <h2 class="title-lg">Let's start with<br>your details</h2>
-        <p class="subtitle">We'll use these to create your personal Mole Clinic Profile.</p>
+        <p class="subtitle">We'll send your personalised Skin Health Profile to your inbox — keep it, share it with your GP, or refer back anytime.</p>
         <div style="margin-top:24px">
           <div class="input-group">
             <label class="input-label">First name</label>
-            <input class="input-field" type="text" id="nameInput" placeholder="Your first name" value="${state.name}">
+            <input class="input-field" type="text" id="nameInput" placeholder="Your first name" value="${state.name}" autocomplete="given-name">
           </div>
           <div class="input-group">
             <label class="input-label">Email address</label>
-            <input class="input-field" type="email" id="emailInput" placeholder="your@email.com" value="${state.email}">
+            <input class="input-field" type="email" id="emailInput" placeholder="your@email.com" value="${state.email}" autocomplete="email">
           </div>
           <div class="input-group">
             <label class="input-label">Postcode</label>
-            <input class="input-field" type="text" id="postcodeInput" placeholder="e.g. M1 2AB" value="${state.postcode}" maxlength="8" style="text-transform:uppercase">
+            <input class="input-field" type="text" id="postcodeInput" placeholder="e.g. M1 2AB" value="${state.postcode}" maxlength="8" style="text-transform:uppercase" autocomplete="postal-code">
           </div>
+          <p style="font-size:12px;color:var(--tmc-gray-600);margin-top:4px">&#128274; Your data is processed in accordance with GDPR. We'll never sell your details.</p>
         </div>
         <div class="disclaimer" style="margin-top:12px">
           We need your postcode to recommend your nearest Mole Clinic location.
         </div>
       </div>
       <div class="bottom-action">
-        <button class="btn-primary" id="emailNext" disabled>Continue →</button>
+        <button class="btn-primary" id="emailNext" disabled>Continue &#8594;</button>
       </div>
+      ${renderFooter()}
     </div>
   `;
 }
 
+// ===== CONSENT =====
 function renderConsent() {
   return `
     <div class="screen">
@@ -1263,7 +1430,6 @@ function renderConsent() {
       <div class="content animate-in">
         <h2 class="title-lg">Before we continue</h2>
         <p class="subtitle">We need your consent to process your information and keep you updated.</p>
-        
         <div style="margin-top:24px">
           <div class="card" style="margin-bottom:12px">
             <div class="consent-row">
@@ -1275,7 +1441,6 @@ function renderConsent() {
               </div>
             </div>
           </div>
-          
           <div class="card">
             <div class="consent-row">
               <div class="consent-checkbox ${state.consentMarketing ? 'checked' : ''}" id="consentMarketing"></div>
@@ -1286,18 +1451,19 @@ function renderConsent() {
             </div>
           </div>
         </div>
-
         <div class="disclaimer">
           <strong>Your photos are private.</strong> Uploaded photographs are stored securely and only used to help generate your risk profile. They are never shared with third parties.
         </div>
       </div>
       <div class="bottom-action">
-        <button class="btn-primary" id="consentNext" ${!state.consentData ? 'disabled' : ''}>Continue →</button>
+        <button class="btn-primary" id="consentNext" ${!state.consentData ? 'disabled' : ''}>Continue &#8594;</button>
       </div>
+      ${renderFooter()}
     </div>
   `;
 }
 
+// ===== SKIN TYPE =====
 function renderSkinType() {
   return `
     <div class="screen">
@@ -1305,7 +1471,6 @@ function renderSkinType() {
       <div class="content animate-in">
         <h2 class="title-lg">What's your skin type?</h2>
         <p class="subtitle">Select the Fitzpatrick skin type that best describes your natural skin tone and how it reacts to sun exposure.</p>
-        
         <div class="skin-type-grid">
           ${skinTypes.map(st => `
             <div class="skin-type-card ${state.skinType === st.id ? 'selected' : ''}" data-skin="${st.id}">
@@ -1317,22 +1482,26 @@ function renderSkinType() {
         </div>
       </div>
       <div class="bottom-action">
-        <button class="btn-primary" id="skinNext" ${!state.skinType ? 'disabled' : ''}>Continue →</button>
+        <button class="btn-primary" id="skinNext" ${!state.skinType ? 'disabled' : ''}>Continue &#8594;</button>
       </div>
+      ${renderFooter()}
     </div>
   `;
 }
 
+// ===== QUESTIONNAIRE =====
 function renderQuestionnaire() {
   const q = questions[state.currentQuestion];
   const selected = state.answers[q.id];
+  const nudge = riskNudges[q.id] && selected && riskNudges[q.id][selected]
+    ? `<div class="risk-nudge"><div class="risk-nudge-icon">&#8505;</div><div class="risk-nudge-text">${riskNudges[q.id][selected]}</div></div>`
+    : '';
   return `
     <div class="screen">
       ${renderHeader()}
       <div class="content" style="animation: slideInRight 0.3s ease-out">
         <h2 class="title-lg">${q.question}</h2>
         ${q.subtitle ? `<p class="subtitle-sm">${q.subtitle}</p>` : ''}
-        
         <div style="margin-top:20px">
           ${q.options.map(opt => `
             <div class="option-card ${selected === opt.value ? 'selected' : ''}" data-answer="${opt.value}">
@@ -1344,14 +1513,98 @@ function renderQuestionnaire() {
             </div>
           `).join('')}
         </div>
+        ${nudge}
       </div>
       <div class="bottom-action">
-        <button class="btn-primary" id="questionNext" ${!selected ? 'disabled' : ''}>${state.currentQuestion === questions.length - 1 ? 'Continue to Photos →' : 'Next Question →'}</button>
+        <button class="btn-primary" id="questionNext" ${!selected ? 'disabled' : ''}>${state.currentQuestion === questions.length - 1 ? 'Continue to Photos &#8594;' : 'Next Question &#8594;'}</button>
       </div>
+      ${renderFooter()}
     </div>
   `;
 }
 
+// ===== BODY MAP SVG =====
+function renderBodyMapSVG() {
+  const photos = state.bodyPhotos;
+  // SVG coordinate map for each region (clickable areas overlaid on the body outline)
+  // Body is drawn at roughly 200x380 viewBox
+  const regionAreas = [
+    { id: 'head_face',  cx: 100, cy: 28,  w: 52, h: 46, rx: 26 },  // ellipse
+    { id: 'neck',       cx: 100, cy: 66,  w: 26, h: 22, rx: 6  },
+    { id: 'chest',      cx: 100, cy: 108, w: 82, h: 52, rx: 8  },
+    { id: 'abdomen',    cx: 100, cy: 166, w: 68, h: 44, rx: 8  },
+    { id: 'left_arm',   cx: 56,  cy: 130, w: 26, h: 80, rx: 10 },
+    { id: 'right_arm',  cx: 144, cy: 130, w: 26, h: 80, rx: 10 },
+    { id: 'left_leg',   cx: 78,  cy: 270, w: 34, h: 110,rx: 10 },
+    { id: 'right_leg',  cx: 122, cy: 270, w: 34, h: 110,rx: 10 },
+    { id: 'hands_feet', cx: 100, cy: 345, w: 80, h: 24, rx: 6  },
+  ];
+
+  const dotPositions = {
+    head_face:  [100, 28],  neck: [100, 66],  chest: [100, 108],
+    abdomen:    [100, 166], left_arm: [56, 130], right_arm: [144, 130],
+    left_leg:   [78, 270],  right_leg: [122, 270], hands_feet: [100, 345],
+    back:       [100, 140],
+  };
+
+  const areasHtml = regionAreas.map(r => {
+    const has = !!photos[r.id];
+    const rid = bodyRegions.find(br => br.id === r.id);
+    return `<rect
+      x="${r.cx - r.w/2}" y="${r.cy - r.h/2}"
+      width="${r.w}" height="${r.h}"
+      rx="${r.rx}"
+      class="body-region-area${has ? ' has-photo' : ''}"
+      data-region="${r.id}"
+      data-label="${rid ? rid.label : r.id}"
+    ><title>${rid ? rid.label : r.id}${has ? ' ✓' : ''}</title></rect>`;
+  }).join('');
+
+  const dotsHtml = Object.keys(photos).map(rid => {
+    const pos = dotPositions[rid];
+    if (!pos) return '';
+    return `<circle cx="${pos[0]}" cy="${pos[1]}" r="6" class="region-dot"/>`;
+  }).join('');
+
+  return `
+    <svg class="body-map-svg" viewBox="0 0 200 380" width="200" height="380" xmlns="http://www.w3.org/2000/svg" aria-label="Body map — tap a region to upload a photo">
+      <!-- Body outline: head -->
+      <ellipse cx="100" cy="28" rx="25" ry="23" class="body-outline-path"/>
+      <!-- Neck -->
+      <rect x="88" y="50" width="24" height="20" rx="4" class="body-outline-path"/>
+      <!-- Shoulders/chest -->
+      <path d="M 42 70 Q 42 65 60 64 L 88 62 L 112 62 L 140 64 Q 158 65 158 70 L 155 125 L 45 125 Z" class="body-outline-path"/>
+      <!-- Arms left -->
+      <path d="M 45 75 Q 38 78 34 90 L 30 160 Q 29 168 37 170 Q 45 172 47 164 L 50 125" class="body-outline-path"/>
+      <!-- Arms right -->
+      <path d="M 155 75 Q 162 78 166 90 L 170 160 Q 171 168 163 170 Q 155 172 153 164 L 150 125" class="body-outline-path"/>
+      <!-- Hands left -->
+      <ellipse cx="35" cy="175" rx="10" ry="8" class="body-outline-path"/>
+      <!-- Hands right -->
+      <ellipse cx="165" cy="175" rx="10" ry="8" class="body-outline-path"/>
+      <!-- Abdomen / torso lower -->
+      <path d="M 45 125 L 45 190 Q 48 210 62 214 L 138 214 Q 152 210 155 190 L 155 125 Z" class="body-outline-path"/>
+      <!-- Hips -->
+      <path d="M 62 214 Q 52 216 48 228 L 46 240 L 154 240 L 152 228 Q 148 216 138 214 Z" class="body-outline-path"/>
+      <!-- Left leg -->
+      <path d="M 46 240 L 42 330 Q 41 345 55 348 Q 69 350 72 336 L 78 240 Z" class="body-outline-path"/>
+      <!-- Right leg -->
+      <path d="M 154 240 L 158 330 Q 159 345 145 348 Q 131 350 128 336 L 122 240 Z" class="body-outline-path"/>
+      <!-- Left foot -->
+      <ellipse cx="52" cy="352" rx="14" ry="7" class="body-outline-path"/>
+      <!-- Right foot -->
+      <ellipse cx="148" cy="352" rx="14" ry="7" class="body-outline-path"/>
+
+      <!-- Clickable hotspot regions -->
+      ${areasHtml}
+
+      <!-- Uploaded region dots -->
+      ${dotsHtml}
+    </svg>
+  `;
+}
+
+// ===== BODY MAP SCREEN =====
 function renderBodyMap() {
   const photosCount = Object.keys(state.bodyPhotos).length;
   return `
@@ -1360,28 +1613,23 @@ function renderBodyMap() {
       <div class="content-tight animate-in">
         <h2 class="title-lg">Map your moles</h2>
         <p class="subtitle-sm">Tap a body area to upload a photo of any moles or areas of concern. Upload at least one photo to continue.</p>
-        
-        <div class="body-region-list" style="margin-top:20px">
-          ${bodyRegions.map(r => `
-            <button class="body-region-btn ${state.bodyPhotos[r.id] ? 'has-photo' : ''}" data-region="${r.id}">
-              ${r.emoji} ${r.label}
-            </button>
-          `).join('')}
+
+        <div class="body-map-container">
+          ${renderBodyMapSVG()}
+          <div class="body-map-count">${photosCount > 0 ? `${photosCount} area${photosCount > 1 ? 's' : ''} photographed` : 'Tap a region to add a photo'}</div>
         </div>
 
-        ${photosCount > 0 ? `
-          <div style="margin-top:16px; text-align:center">
-            <span class="tag tag-low">${photosCount} photo${photosCount > 1 ? 's' : ''} uploaded</span>
-          </div>
-        ` : ''}
+        <p style="font-size:12px;color:var(--tmc-gray-400);text-align:center;margin-top:4px">Note: Back is captured via the body regions above</p>
       </div>
       <div class="bottom-action">
-        <button class="btn-primary" id="bodyMapNext" ${photosCount === 0 ? 'disabled' : ''}>Continue to Self-Check →</button>
+        <button class="btn-primary" id="bodyMapNext" ${photosCount === 0 ? 'disabled' : ''}>Continue to Self-Check &#8594;</button>
       </div>
+      ${renderFooter()}
     </div>
   `;
 }
 
+// ===== PHOTO UPLOAD =====
 function renderPhotoUpload() {
   const region = bodyRegions.find(r => r.id === state.selectedRegion);
   const hasPhoto = state.bodyPhotos[state.selectedRegion];
@@ -1389,24 +1637,24 @@ function renderPhotoUpload() {
     <div class="screen">
       ${renderHeader()}
       <div class="content animate-in">
-        <h2 class="title-lg">${region ? region.emoji : '📸'} ${region ? region.label : 'Upload Photo'}</h2>
+        <h2 class="title-lg">&#128247; ${region ? region.label : 'Upload Photo'}</h2>
         <p class="subtitle-sm">Take a clear photo of any moles or areas of concern in this region.</p>
-        
+
         <div class="photo-tips" style="margin-top:16px">
           <div class="photo-tip">
-            <div class="photo-tip-icon">💡</div>
+            <div class="photo-tip-icon">&#128161;</div>
             <div class="photo-tip-text">Good, even lighting — avoid shadows</div>
           </div>
           <div class="photo-tip">
-            <div class="photo-tip-icon">📏</div>
+            <div class="photo-tip-icon">&#128207;</div>
             <div class="photo-tip-text">15–30cm away from the mole</div>
           </div>
           <div class="photo-tip">
-            <div class="photo-tip-icon">🎯</div>
+            <div class="photo-tip-icon">&#127919;</div>
             <div class="photo-tip-text">Keep the mole centred and in focus</div>
           </div>
           <div class="photo-tip">
-            <div class="photo-tip-icon">📐</div>
+            <div class="photo-tip-icon">&#128208;</div>
             <div class="photo-tip-text">Include a coin for scale if possible</div>
           </div>
         </div>
@@ -1414,39 +1662,28 @@ function renderPhotoUpload() {
         ${hasPhoto ? `
           <div class="photo-preview">
             <img src="${hasPhoto}" alt="Uploaded photo">
-            <button class="photo-preview-remove" onclick="removePhoto('${state.selectedRegion}')">✕</button>
+            <button class="photo-preview-remove" onclick="removePhoto('${state.selectedRegion}')">&#10005;</button>
           </div>
         ` : `
           <div class="photo-upload-zone" id="photoZone">
-            <div class="photo-upload-icon">📸</div>
+            <div class="photo-upload-icon">&#128247;</div>
             <div class="photo-upload-text">Tap to take or upload a photo</div>
             <div class="photo-upload-hint">JPG or PNG, max 10MB</div>
           </div>
         `}
         <input type="file" id="photoInput" accept="image/*" capture="environment" style="display:none">
-        
+
         <div style="margin-top:16px; display:flex; gap:10px">
-          <button class="btn-secondary" onclick="navigate('bodymap')" style="flex:1">← Back to Map</button>
-          ${hasPhoto ? `<button class="btn-primary" onclick="navigate('bodymap')" style="flex:1">Save & Continue</button>` : ''}
+          <button class="btn-secondary" onclick="navigate('bodymap')" style="flex:1">&#8592; Back to Map</button>
+          ${hasPhoto ? `<button class="btn-primary" onclick="navigate('bodymap')" style="flex:1">Save &amp; Continue</button>` : ''}
         </div>
       </div>
+      ${renderFooter()}
     </div>
   `;
 }
 
-function renderPhotoTips() {
-  return `
-    <div class="screen">
-      ${renderHeader()}
-      <div class="content animate-in">
-        <h2 class="title-lg">📸 Photo Guide</h2>
-        <p class="subtitle">Better photos help us give you better advice. Here's how to get the best shots.</p>
-        <!-- tips already shown in upload screen -->
-      </div>
-    </div>
-  `;
-}
-
+// ===== ABCDE =====
 function renderABCDE() {
   return `
     <div class="screen">
@@ -1454,11 +1691,11 @@ function renderABCDE() {
       <div class="content animate-in">
         <h2 class="title-lg">The ABCDE<br>Self-Check</h2>
         <p class="subtitle-sm">Dermatologists use the ABCDE rule to assess moles. Have you noticed any of these in your moles?</p>
-        
+
         <div class="abcde-cards">
           ${abcdeItems.map(item => `
-            <div class="abcde-card" style="cursor:pointer" data-abcde="${item.letter}">
-              <div class="abcde-letter ${state.abcdeAnswers[item.letter] ? 'style="background:var(--tmc-coral)"' : ''}">${item.letter}</div>
+            <div class="abcde-card ${state.abcdeAnswers[item.letter] ? 'checked' : ''}" style="cursor:pointer" data-abcde="${item.letter}">
+              <div class="abcde-letter">${item.letter}</div>
               <div style="flex:1">
                 <div class="abcde-title">${item.title}</div>
                 <div class="abcde-desc">${item.desc}</div>
@@ -1473,40 +1710,67 @@ function renderABCDE() {
         </div>
       </div>
       <div class="bottom-action">
-        <button class="btn-primary" onclick="calculateAndShow()">Build My Profile →</button>
+        <button class="btn-primary" onclick="calculateAndShow()">Build My Profile &#8594;</button>
       </div>
+      ${renderFooter()}
     </div>
   `;
 }
 
+// ===== LOADING =====
 function renderLoading() {
   return `
     <div class="screen">
       ${renderHeader(false)}
       <div class="loading-screen">
-        <div class="loading-spinner"></div>
-        <h2 class="title-md" style="margin-bottom:8px">Building your profile</h2>
-        <div class="loading-messages">
-          <p class="loading-msg" id="loadingMsg">Analysing your risk factors...</p>
+        <div class="loading-body-wrap">
+          <svg class="loading-body-svg" viewBox="0 0 100 200" width="100" height="200" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="50" cy="16" rx="14" ry="13" fill="none" stroke="var(--tmc-teal)" stroke-width="2"/>
+            <rect x="43" y="28" width="14" height="11" rx="3" fill="none" stroke="var(--tmc-teal)" stroke-width="2"/>
+            <path d="M22 37 Q22 34 32 33 L44 32 L56 32 L68 33 Q78 34 78 37 L76 67 L24 67 Z" fill="none" stroke="var(--tmc-teal)" stroke-width="2"/>
+            <path d="M24 40 Q18 43 16 52 L13 90 Q12 95 18 96 Q24 97 25 92 L27 67" fill="none" stroke="var(--tmc-teal)" stroke-width="2"/>
+            <path d="M76 40 Q82 43 84 52 L87 90 Q88 95 82 96 Q76 97 75 92 L73 67" fill="none" stroke="var(--tmc-teal)" stroke-width="2"/>
+            <path d="M24 67 L23 103 Q24 112 32 114 L68 114 Q76 112 77 103 L76 67 Z" fill="none" stroke="var(--tmc-teal)" stroke-width="2"/>
+            <path d="M32 114 Q26 116 24 123 L23 130 L77 130 L76 123 Q74 116 68 114 Z" fill="none" stroke="var(--tmc-teal)" stroke-width="2"/>
+            <path d="M23 130 L21 178 Q20 185 28 186 Q36 187 38 180 L42 130 Z" fill="none" stroke="var(--tmc-teal)" stroke-width="2"/>
+            <path d="M77 130 L79 178 Q80 185 72 186 Q64 187 62 180 L58 130 Z" fill="none" stroke="var(--tmc-teal)" stroke-width="2"/>
+          </svg>
+          <div class="loading-scan-line"></div>
         </div>
+        <h2 class="title-md" style="margin-bottom:10px">Building your profile</h2>
+        <div class="loading-msg" id="loadingMsg">Analysing your risk profile...</div>
       </div>
+      ${renderFooter()}
     </div>
   `;
 }
 
+// ===== PROFILE =====
 function renderProfile() {
   const rs = state.riskScore;
   const rl = state.riskLevel;
   const tagClass = rl === 'Low' ? 'tag-low' : rl === 'Moderate' ? 'tag-moderate' : 'tag-high';
-  const gaugeColor = rl === 'Low' ? '#28a745' : rl === 'Moderate' ? '#e65100' : '#c62828';
-  const gaugePercent = Math.min(rs / 100, 1);
-  const circumference = Math.PI * 80;
-  const dashOffset = circumference * (1 - gaugePercent);
   const abcdeCount = Object.values(state.abcdeAnswers).filter(Boolean).length;
   const photosCount = Object.keys(state.bodyPhotos).length;
-
   const service = getRecommendedService();
-  const nearestClinic = getNearestClinic();
+  const allClinics = getNearestClinics();
+  const nearest = allClinics[0];
+
+  const meansText = {
+    Low: "Your risk profile suggests a lower likelihood of skin cancer. A professional baseline check is still recommended — especially as you have moles or notice any changes.",
+    Moderate: "Several factors in your profile suggest you'd benefit from a professional skin assessment. We recommend booking a check at your nearest Mole Clinic.",
+    High: "Your profile shows multiple risk factors for skin cancer. We strongly recommend booking a comprehensive skin check as soon as possible."
+  }[rl];
+
+  const meansClass = { Low: 'low', Moderate: 'moderate', High: 'high' }[rl];
+
+  const serviceBadge = rl === 'High'
+    ? `<div class="service-badge service-badge-recommended">Recommended for you</div>`
+    : rl === 'Moderate'
+    ? `<div class="service-badge service-badge-popular">Most Popular</div>`
+    : `<div class="service-badge service-badge-recommended">Recommended for you</div>`;
+
+  const keyFactors = getKeyRiskFactorBullets();
 
   return `
     <div class="screen">
@@ -1515,60 +1779,132 @@ function renderProfile() {
         <div class="header-logo">The Mole <span>Clinic</span></div>
         <div></div>
       </div>
-      <div class="content animate-in">
-        <div style="text-align:center; margin-bottom:24px;">
+      <div class="results-content animate-in">
+
+        <!-- Title -->
+        <div style="text-align:center; margin-bottom:20px;">
           <p class="label">Your Mole Clinic Profile</p>
-          <h2 class="title-xl">${state.name || 'Your'}'s<br>Skin Health</h2>
+          <h2 class="title-xl">${state.name ? state.name + "'s" : 'Your'}<br>Skin Health</h2>
         </div>
 
-        <!-- Risk Gauge -->
-        <div style="text-align:center" class="animate-in-delay-1">
-          <svg width="200" height="120" viewBox="0 0 200 120">
-            <path d="M 20 100 A 80 80 0 0 1 180 100" class="risk-gauge-bg" fill="none" stroke="#e8e8e8" stroke-width="12"/>
-            <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="${gaugeColor}" stroke-width="12" stroke-linecap="round"
-              stroke-dasharray="${circumference/2}" stroke-dashoffset="${circumference/2 - (gaugePercent * circumference/2)}"
-              style="transition: stroke-dashoffset 1.5s cubic-bezier(0.4,0,0.2,1)"/>
-            <text x="100" y="85" text-anchor="middle" class="risk-gauge-label" fill="${gaugeColor}" font-family="Fraunces,serif" font-size="28" font-weight="700">${rs}</text>
-            <text x="100" y="108" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" fill="#9a9a9a">out of 100</text>
+        <!-- 1. Risk Gauge -->
+        <div class="risk-gauge-wrap animate-in-delay-1">
+          <svg id="riskGaugeSvg" width="220" height="130" viewBox="0 0 220 130" style="display:block;margin:0 auto">
+            <defs>
+              <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" style="stop-color:#28a745"/>
+                <stop offset="50%" style="stop-color:#f2cc8f"/>
+                <stop offset="100%" style="stop-color:#c62828"/>
+              </linearGradient>
+            </defs>
+            <!-- Background arc -->
+            <path d="M 20 110 A 90 90 0 0 1 200 110" fill="none" stroke="#e8e8e8" stroke-width="14" stroke-linecap="round"/>
+            <!-- Gradient arc (always full, serves as colour ref) -->
+            <path d="M 20 110 A 90 90 0 0 1 200 110" fill="none" stroke="url(#gaugeGrad)" stroke-width="14" stroke-linecap="round" opacity="0.25"/>
+            <!-- Animated fill arc -->
+            <path id="gaugeFill" d="M 20 110 A 90 90 0 0 1 200 110" fill="none" stroke="url(#gaugeGrad)" stroke-width="14" stroke-linecap="round"
+              stroke-dasharray="283" stroke-dashoffset="283"
+              style="transition: stroke-dashoffset 1.6s cubic-bezier(0.4,0,0.2,1)"/>
+            <!-- Score text -->
+            <text id="gaugeScore" x="110" y="95" text-anchor="middle" font-family="Fraunces,serif" font-size="36" font-weight="700" fill="#1a2332">0</text>
+            <text x="110" y="115" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" fill="#9a9a9a">out of 100</text>
           </svg>
-          <div style="margin-top:4px">
-            <span class="tag ${tagClass}" style="font-size:14px; padding:6px 16px;">${rl} Risk</span>
+          <div style="margin-top:6px;text-align:center">
+            <span class="tag ${tagClass}" style="font-size:14px;padding:6px 18px;">${rl} Risk</span>
           </div>
         </div>
 
         <div class="divider"></div>
 
-        <!-- Service Recommendation -->
+        <!-- 2. What this means -->
         <div class="animate-in-delay-2">
+          <p class="label">What this means for you</p>
+          <div class="means-card ${meansClass}">
+            <p>${meansText}</p>
+          </div>
+        </div>
+
+        <!-- 3. Key risk factors -->
+        ${keyFactors.length > 0 ? `
+          <div class="animate-in-delay-2" style="margin-bottom:16px">
+            <p class="label">Key risk factors identified</p>
+            <div class="card">
+              <div class="risk-factors-list">
+                ${keyFactors.map(f => `
+                  <div class="risk-factor-item">
+                    <div class="risk-factor-dot${f.low ? ' low' : ''}"></div>
+                    <span>${f.text}</span>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+        ` : ''}
+
+        <!-- 4. Recommended service -->
+        <div class="animate-in-delay-3">
+          <p class="label">Recommended service</p>
           <div class="service-card">
-            <div style="font-size:12px; text-transform:uppercase; letter-spacing:1px; opacity:0.6; margin-bottom:8px">Recommended for you</div>
+            ${serviceBadge}
             <div class="service-name">${service.name}</div>
             <div class="service-desc">${service.desc}</div>
             <div class="service-price">From ${service.price}</div>
           </div>
         </div>
 
-        <!-- Nearest Clinic -->
+        <!-- 5. Top 3 nearest clinics -->
         <div class="animate-in-delay-3">
-          <p class="label">Your nearest clinic</p>
-          <div class="clinic-card recommended">
-            <div class="clinic-icon">📍</div>
-            <div>
-              <div class="clinic-name">${nearestClinic.name}</div>
-              <div class="clinic-distance">Recommended based on your postcode</div>
+          <p class="label">Your nearest clinics</p>
+          ${allClinics.slice(0,3).map((c, i) => `
+            <div class="clinic-card${i === 0 ? ' recommended' : ''}">
+              <div class="clinic-icon">&#128205;</div>
+              <div style="flex:1">
+                <div class="clinic-name">${c.name}${i === 0 ? ' <span style="font-size:11px;color:var(--tmc-teal)">&#10003; Nearest</span>' : ''}</div>
+                <div class="clinic-distance">${i === 0 ? 'Closest to ' + state.postcode.toUpperCase() : 'The Mole Clinic'}</div>
+              </div>
+              <button class="clinic-book-btn" onclick="window.open('${c.bookUrl}','_blank')">Book Now</button>
             </div>
+          `).join('')}
+          <div style="text-align:center;margin-top:6px">
+            <span class="trustpilot-badge">&#11088; Rated Excellent on Trustpilot</span>
           </div>
-          <button class="btn-primary" style="margin-top:12px" onclick="window.open('https://themoleclinic.co.uk/book','_blank')">
-            Book Your Appointment →
-          </button>
-          <button class="btn-secondary" style="margin-top:10px" onclick="window.open('https://themoleclinic.co.uk','_blank')">
-            View All Clinics
-          </button>
         </div>
 
         <div class="divider"></div>
 
-        <!-- Profile Summary -->
+        <!-- 7. Email confirmation -->
+        <div class="email-confirm-card animate-in-delay-4">
+          <div class="email-confirm-icon">&#128231;</div>
+          <div>
+            <strong>Your full profile has been sent to ${state.email || 'your email'}</strong><br>
+            <span style="font-size:12px;opacity:0.85">We'll also remind you in 3 months to re-check your skin.</span>
+          </div>
+        </div>
+
+        <!-- 8. Refer a friend -->
+        <div class="card animate-in-delay-4" style="margin-bottom:16px">
+          <div class="title-md" style="font-size:16px;margin-bottom:6px">Someone you care about could be at risk</div>
+          <p style="font-size:13px;color:var(--tmc-gray-600);line-height:1.5">Share this free check with friends or family. It takes 5 minutes and could make a real difference.</p>
+          <div class="share-row">
+            <button class="share-btn share-btn-wa" onclick="shareApp('whatsapp')">&#128241; WhatsApp</button>
+            <button class="share-btn" onclick="shareApp('email')">&#9993; Email</button>
+            <button class="share-btn" onclick="shareApp('sms')">&#128172; SMS</button>
+            <button class="share-btn" onclick="shareApp('copy')">&#128279; Copy</button>
+          </div>
+        </div>
+
+        <!-- 9. Re-check reminder -->
+        <div class="card" style="margin-bottom:16px">
+          <div class="title-md" style="font-size:16px;margin-bottom:4px">&#128276; Set a Re-check Reminder</div>
+          <p style="font-size:13px;color:var(--tmc-gray-600);line-height:1.5">We recommend re-checking your skin every 3–6 months.</p>
+          <div style="display:flex;gap:8px;margin-top:12px">
+            <button class="btn-secondary" style="flex:1;font-size:13px;padding:10px" onclick="setReminder(3)">In 3 months</button>
+            <button class="btn-secondary" style="flex:1;font-size:13px;padding:10px" onclick="setReminder(6)">In 6 months</button>
+          </div>
+          <div id="reminderConfirm" style="display:none;margin-top:10px;padding:10px;background:var(--tmc-teal-light);border-radius:var(--radius-sm);font-size:13px;color:var(--tmc-teal-dark);text-align:center"></div>
+        </div>
+
+        <!-- Profile summary -->
         <div class="animate-in-delay-4">
           <p class="label">Profile Summary</p>
           <div class="card" style="margin-bottom:16px">
@@ -1579,56 +1915,51 @@ function renderProfile() {
               <div class="profile-row"><span class="profile-row-label">Photos Uploaded</span><span class="profile-row-value">${photosCount}</span></div>
               <div class="profile-row"><span class="profile-row-label">ABCDE Concerns</span><span class="profile-row-value">${abcdeCount} of 5</span></div>
             </div>
-            <div class="profile-section">
-              <div class="profile-section-title">Key Risk Factors</div>
-              ${getRiskFactors().map(f => `
-                <div class="profile-row">
-                  <span class="profile-row-label">${f.label}</span>
-                  <span class="profile-row-value">${f.value}</span>
-                </div>
-              `).join('')}
-            </div>
           </div>
         </div>
 
-        <!-- Share & Remind -->
-        <div class="card" style="margin-bottom:16px">
-          <div class="title-md" style="font-size:16px; margin-bottom:4px">🔔 Set a Reminder</div>
-          <p style="font-size:13px; color:var(--tmc-gray-600); line-height:1.5">We recommend re-checking your skin every 3–6 months. We'll send you a gentle reminder.</p>
-          <div style="display:flex; gap:8px; margin-top:12px">
-            <button class="btn-secondary" style="flex:1; font-size:13px; padding:10px" onclick="alert('Reminder set for 3 months! We\\'ll email you at ${state.email}')">3 months</button>
-            <button class="btn-secondary" style="flex:1; font-size:13px; padding:10px" onclick="alert('Reminder set for 6 months! We\\'ll email you at ${state.email}')">6 months</button>
-          </div>
-        </div>
-
-        <div class="card" style="margin-bottom:16px">
-          <div class="title-md" style="font-size:16px; margin-bottom:4px">🤝 Share with Someone</div>
-          <p style="font-size:13px; color:var(--tmc-gray-600); line-height:1.5">Know someone who should check their skin? Share this free tool.</p>
-          <div class="share-row">
-            <button class="share-btn" onclick="shareApp('whatsapp')">WhatsApp</button>
-            <button class="share-btn" onclick="shareApp('email')">Email</button>
-            <button class="share-btn" onclick="shareApp('copy')">Copy Link</button>
-          </div>
-        </div>
-
+        <!-- 10. Disclaimer -->
         <div class="disclaimer">
           <strong>Medical Disclaimer:</strong> This profile is not a medical diagnosis. The risk assessment is based on self-reported information and does not replace professional medical advice. Please consult a qualified dermatologist for clinical assessment. The Mole Clinic recommends regular professional skin checks regardless of risk level.
         </div>
 
-        <div class="trust-badge" style="margin-bottom:40px">
-          🔒 Your data is encrypted and stored in accordance with GDPR
+        <div class="trust-badge" style="margin-bottom:20px">
+          &#128274; Your data is encrypted and stored in accordance with GDPR
         </div>
+
       </div>
+      ${renderFooter()}
     </div>
   `;
 }
 
-// ===== CALCULATION LOGIC =====
+// ===== GAUGE ANIMATION =====
+function animateGauge() {
+  const fill = document.getElementById('gaugeFill');
+  const scoreEl = document.getElementById('gaugeScore');
+  if (!fill || !scoreEl) return;
+  const total = 283;
+  const target = total * (1 - Math.min(state.riskScore / 100, 1));
+  fill.style.strokeDashoffset = target;
 
+  // Animate counter
+  let current = 0;
+  const end = state.riskScore;
+  const duration = 1600;
+  const step = duration / end;
+  const timer = setInterval(() => {
+    current++;
+    scoreEl.textContent = current;
+    if (current >= end) {
+      clearInterval(timer);
+      scoreEl.textContent = end;
+    }
+  }, step);
+}
+
+// ===== CALCULATIONS =====
 function calculateRiskScore() {
   let total = 0;
-  
-  // Questionnaire scores
   questions.forEach(q => {
     const answer = state.answers[q.id];
     if (answer) {
@@ -1636,19 +1967,13 @@ function calculateRiskScore() {
       if (opt) total += opt.score;
     }
   });
-
-  // Skin type score
   if (state.skinType) {
     const st = skinTypes.find(s => s.id === state.skinType);
     if (st) total += st.score;
   }
-
-  // ABCDE scores
   const abcdeCount = Object.values(state.abcdeAnswers).filter(Boolean).length;
   total += abcdeCount * 4;
-
-  // Normalize to 0-100
-  const maxPossible = 10 + 8 + 10 + 7 + 7 + 5 + 8 + 7 + 9 + 6 + 6 + 6 + 20; // ~109
+  const maxPossible = 10 + 8 + 10 + 7 + 7 + 5 + 8 + 7 + 9 + 6 + 6 + 6 + 20;
   const normalized = Math.round((total / maxPossible) * 100);
   return Math.min(Math.max(normalized, 5), 95);
 }
@@ -1661,119 +1986,180 @@ function getRiskLevel(score) {
 
 function getRecommendedService() {
   const rl = state.riskLevel;
-  const changingMoles = state.answers.changing_moles;
-  
-  if (rl === 'High' || changingMoles === 'yes_multiple') {
+  const cm = state.answers.changing_moles;
+  if (rl === 'High' || cm === 'yes_multiple') {
     return {
       name: 'Full Body Mole Check',
-      desc: 'A comprehensive head-to-toe examination by our consultant dermatologists using dermoscopy. Ideal for those with multiple risk factors or changing moles.',
+      desc: 'Comprehensive head-to-toe examination by a consultant dermatologist using advanced dermoscopy. Every mole mapped, measured, and assessed.',
       price: '£250'
     };
-  } else if (rl === 'Moderate' || changingMoles === 'yes_one') {
+  } else if (rl === 'Moderate' || cm === 'yes_one') {
     return {
       name: 'Targeted Mole Check',
-      desc: 'A focused examination of specific moles or areas of concern using advanced dermoscopy. Perfect if you have particular moles you\'re worried about.',
+      desc: 'Focused examination of specific moles or areas of concern using dermoscopy. Ideal if you have particular moles you\'re worried about.',
       price: '£150'
     };
   } else {
     return {
       name: 'Skin Health Screen',
-      desc: 'A quick professional assessment to establish your baseline and set up ongoing monitoring. Great for peace of mind and building good habits.',
+      desc: 'A professional baseline assessment to establish your skin health profile and set up ongoing monitoring. Perfect for peace of mind.',
       price: '£100'
     };
   }
 }
 
+function getNearestClinics() {
+  const pc = (state.postcode || '').toUpperCase().replace(/\s/g, '');
+  const scored = clinics.map(c => {
+    let score = 0;
+    for (const p of c.postcodes) {
+      if (pc.startsWith(p)) { score = p.length; break; }
+    }
+    return { ...c, matchScore: score };
+  });
+  // Sort: best match first, then rest in order
+  scored.sort((a, b) => b.matchScore - a.matchScore);
+  return scored;
+}
+
 function getNearestClinic() {
-  const pc = (state.postcode || '').toUpperCase().trim();
-  // Simple postcode-area matching for POC
-  if (pc.startsWith('M') || pc.startsWith('WA') || pc.startsWith('SK') || pc.startsWith('OL') || pc.startsWith('BL') || pc.startsWith('WN') || pc.startsWith('CH') || pc.startsWith('CW')) return clinics.find(c => c.id === 'manchester');
-  if (pc.startsWith('LS') || pc.startsWith('BD') || pc.startsWith('HG') || pc.startsWith('WF') || pc.startsWith('HX') || pc.startsWith('HD')) return clinics.find(c => c.id === 'leeds');
-  if (pc.startsWith('BS') || pc.startsWith('BA') || pc.startsWith('GL') || pc.startsWith('SN')) return clinics.find(c => c.id === 'bristol');
-  if (pc.startsWith('B') && !pc.startsWith('BS') && !pc.startsWith('BD') && !pc.startsWith('BL') && !pc.startsWith('BN') || pc.startsWith('WS') || pc.startsWith('DY') || pc.startsWith('WV') || pc.startsWith('CV')) return clinics.find(c => c.id === 'birmingham');
-  if (pc.startsWith('E') && pc.length > 2 && pc[1] >= '0' && pc[1] <= '9') return clinics.find(c => c.id === 'canarywharf');
-  if (pc.startsWith('EC') || pc.startsWith('E1') || pc.startsWith('E2')) return clinics.find(c => c.id === 'city');
-  if (pc.startsWith('SW') || pc.startsWith('KT') || pc.startsWith('TW')) return clinics.find(c => c.id === 'chelsea');
-  // Default to Marylebone for all other London & elsewhere
-  return clinics.find(c => c.id === 'marylebone');
+  return getNearestClinics()[0];
+}
+
+function getKeyRiskFactorBullets() {
+  const bullets = [];
+  const fh = state.answers.family_history;
+  if (fh === 'yes_immediate') bullets.push({ text: 'Family history of skin cancer (immediate family)', low: false });
+  else if (fh === 'yes_extended') bullets.push({ text: 'Family history of skin cancer (extended family)', low: false });
+
+  const ph = state.answers.personal_history;
+  if (ph === 'yes_cancer') bullets.push({ text: 'Previous personal skin cancer diagnosis', low: false });
+  else if (ph === 'yes_mole') bullets.push({ text: 'Suspicious mole previously removed', low: false });
+
+  const sb = state.answers.sunburn_history;
+  if (sb === 'frequently') bullets.push({ text: 'Frequent sunburn history, including blistering burns', low: false });
+  else if (sb === 'occasionally') bullets.push({ text: 'Occasional sunburn history', low: false });
+
+  const su = state.answers.sunbed_use;
+  if (su === 'regularly') bullets.push({ text: 'Regular sunbed use', low: false });
+  else if (su === 'occasionally' || su === 'past') bullets.push({ text: 'Previous sunbed use', low: false });
+
+  const cm = state.answers.changing_moles;
+  if (cm === 'yes_multiple') bullets.push({ text: 'Multiple changing moles noted', low: false });
+  else if (cm === 'yes_one') bullets.push({ text: 'One changing mole noted', low: false });
+
+  const mc = state.answers.mole_count;
+  if (mc === '50plus') bullets.push({ text: '50+ moles on body', low: false });
+  else if (mc === '20-50') bullets.push({ text: '20–50 moles on body', low: false });
+
+  const ow = state.answers.outdoor_work;
+  if (ow === 'both' || ow === 'work_outdoor') bullets.push({ text: 'High UV exposure due to outdoor work or lifestyle', low: false });
+
+  const sp = state.answers.sunscreen_use;
+  if (sp === 'rarely') bullets.push({ text: 'Rarely uses SPF sun protection', low: false });
+
+  const abcdeCount = Object.values(state.abcdeAnswers).filter(Boolean).length;
+  if (abcdeCount > 0) {
+    const letters = Object.entries(state.abcdeAnswers).filter(([,v]) => v).map(([k]) => k).join(', ');
+    bullets.push({ text: `ABCDE concerns noted: ${letters}`, low: false });
+  }
+
+  if (state.skinType === 1 || state.skinType === 2) bullets.push({ text: 'Fair skin type — higher UV sensitivity', low: false });
+
+  if (bullets.length === 0) bullets.push({ text: 'No major risk factors identified in your profile', low: true });
+
+  return bullets.slice(0, 5);
 }
 
 function getRiskFactors() {
   const factors = [];
-  
   const fh = state.answers.family_history;
-  if (fh === 'yes_immediate') factors.push({ label: 'Family History', value: '⚠️ Immediate family' });
+  if (fh === 'yes_immediate') factors.push({ label: 'Family History', value: '&#9888; Immediate family' });
   else if (fh === 'yes_extended') factors.push({ label: 'Family History', value: 'Extended family' });
-  
   const ph = state.answers.personal_history;
-  if (ph === 'yes_cancer') factors.push({ label: 'Personal History', value: '⚠️ Previous diagnosis' });
+  if (ph === 'yes_cancer') factors.push({ label: 'Personal History', value: '&#9888; Previous diagnosis' });
   else if (ph === 'yes_mole') factors.push({ label: 'Personal History', value: 'Mole removed' });
-  
   const sb = state.answers.sunburn_history;
-  if (sb === 'frequently') factors.push({ label: 'Sunburn History', value: '⚠️ Frequent' });
-  
+  if (sb === 'frequently') factors.push({ label: 'Sunburn History', value: '&#9888; Frequent' });
   const ow = state.answers.outdoor_work;
-  if (ow === 'both' || ow === 'work_outdoor') factors.push({ label: 'UV Exposure', value: '⚠️ High' });
-  
+  if (ow === 'both' || ow === 'work_outdoor') factors.push({ label: 'UV Exposure', value: '&#9888; High' });
   const su = state.answers.sunbed_use;
-  if (su === 'regularly') factors.push({ label: 'Sunbed Use', value: '⚠️ Regular' });
-  
+  if (su === 'regularly') factors.push({ label: 'Sunbed Use', value: '&#9888; Regular' });
   const mc = state.answers.mole_count;
-  if (mc === '50plus') factors.push({ label: 'Mole Count', value: '⚠️ 50+' });
-  
+  if (mc === '50plus') factors.push({ label: 'Mole Count', value: '&#9888; 50+' });
   const cm = state.answers.changing_moles;
-  if (cm === 'yes_multiple' || cm === 'yes_one') factors.push({ label: 'Changing Moles', value: '⚠️ Yes' });
-  
+  if (cm === 'yes_multiple' || cm === 'yes_one') factors.push({ label: 'Changing Moles', value: '&#9888; Yes' });
   const sp = state.answers.sunscreen_use;
-  if (sp === 'rarely') factors.push({ label: 'Sun Protection', value: '⚠️ Rarely used' });
-  
-  if (factors.length === 0) factors.push({ label: 'Overall', value: '✅ No major risk factors identified' });
-  
+  if (sp === 'rarely') factors.push({ label: 'Sun Protection', value: '&#9888; Rarely used' });
+  if (factors.length === 0) factors.push({ label: 'Overall', value: '&#10003; No major risk factors identified' });
   return factors;
 }
 
 // ===== LOADING FLOW =====
-
-function calculateAndShow() {
-  navigate('loading');
-  
-  state.riskScore = calculateRiskScore();
-  state.riskLevel = getRiskLevel(state.riskScore);
-  
+function startLoadingMessages() {
   const messages = [
-    'Analysing your risk factors...',
-    'Reviewing your skin profile...',
-    'Assessing photo data...',
-    'Finding your nearest clinic...',
-    'Building your Mole Clinic Profile...'
+    'Analysing your risk profile...',
+    'Comparing against UK skin cancer risk data...',
+    'Identifying your key risk factors...',
+    'Finding your nearest Mole Clinic...',
+    'Preparing your personalised profile...',
   ];
-  
   let i = 0;
   const msgEl = document.getElementById('loadingMsg');
   const interval = setInterval(() => {
     i++;
     if (i < messages.length && msgEl) {
+      msgEl.style.animation = 'none';
+      msgEl.offsetHeight; // reflow
+      msgEl.style.animation = 'fadeIn 0.4s ease-out';
       msgEl.textContent = messages[i];
     }
     if (i >= messages.length - 1) {
       clearInterval(interval);
-      setTimeout(() => navigate('profile'), 800);
+      setTimeout(() => navigate('profile'), 900);
     }
-  }, 800);
+  }, 900);
+}
+
+function calculateAndShow() {
+  state.riskScore = calculateRiskScore();
+  state.riskLevel = getRiskLevel(state.riskScore);
+  navigate('loading');
 }
 
 // ===== SHARING =====
 function shareApp(method) {
   const url = 'https://skincheck.themoleclinic.co.uk';
   const text = 'I just did a free skin health check with The Mole Clinic. You should check yours too!';
-  
   if (method === 'whatsapp') {
-    window.open(`https://wa.me/?text=${encodeURIComponent(text + ' ' + url)}`);
+    window.open('https://wa.me/?text=' + encodeURIComponent(text + ' ' + url));
   } else if (method === 'email') {
-    window.open(`mailto:?subject=${encodeURIComponent('Free Skin Health Check')}&body=${encodeURIComponent(text + '\n\n' + url)}`);
+    window.open('mailto:?subject=' + encodeURIComponent('Free Skin Health Check') + '&body=' + encodeURIComponent(text + '\n\n' + url));
+  } else if (method === 'sms') {
+    window.open('sms:?&body=' + encodeURIComponent(text + ' ' + url));
   } else {
-    navigator.clipboard.writeText(url).then(() => alert('Link copied to clipboard!'));
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(url).then(() => showToast('Link copied to clipboard!'));
+    } else {
+      showToast('Link: ' + url);
+    }
   }
+}
+
+function setReminder(months) {
+  const el = document.getElementById('reminderConfirm');
+  if (el) {
+    el.style.display = 'block';
+    el.textContent = 'Reminder set! We\'ll email you in ' + months + ' months at ' + (state.email || 'your email address') + '.';
+  }
+}
+
+function showToast(msg) {
+  const t = document.createElement('div');
+  t.textContent = msg;
+  t.style.cssText = 'position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:#1a2332;color:white;padding:10px 20px;border-radius:20px;font-size:13px;z-index:9999;white-space:nowrap;animation:fadeIn 0.3s ease-out';
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2500);
 }
 
 function removePhoto(region) {
@@ -1788,37 +2174,31 @@ function bindEvents() {
   const emailInput = document.getElementById('emailInput');
   const postcodeInput = document.getElementById('postcodeInput');
   const emailNext = document.getElementById('emailNext');
-  
+
   if (nameInput && emailInput && postcodeInput && emailNext) {
     const checkEmail = () => {
-      state.name = nameInput.value;
-      state.email = emailInput.value;
-      state.postcode = postcodeInput.value;
-      const valid = state.name.trim() && state.email.includes('@') && state.email.includes('.') && state.postcode.trim().length >= 3;
+      state.name = nameInput.value.trim();
+      state.email = emailInput.value.trim();
+      state.postcode = postcodeInput.value.trim();
+      const valid = state.name && state.email.includes('@') && state.email.includes('.') && state.postcode.length >= 2;
       emailNext.disabled = !valid;
     };
     nameInput.addEventListener('input', checkEmail);
     emailInput.addEventListener('input', checkEmail);
     postcodeInput.addEventListener('input', checkEmail);
     emailNext.addEventListener('click', () => navigate('consent'));
+    checkEmail();
   }
 
-  // Consent screen
+  // Consent
   const consentDataEl = document.getElementById('consentData');
   const consentMarketingEl = document.getElementById('consentMarketing');
   const consentNext = document.getElementById('consentNext');
-  
   if (consentDataEl) {
-    consentDataEl.addEventListener('click', () => {
-      state.consentData = !state.consentData;
-      render();
-    });
+    consentDataEl.addEventListener('click', () => { state.consentData = !state.consentData; render(); });
   }
   if (consentMarketingEl) {
-    consentMarketingEl.addEventListener('click', () => {
-      state.consentMarketing = !state.consentMarketing;
-      render();
-    });
+    consentMarketingEl.addEventListener('click', () => { state.consentMarketing = !state.consentMarketing; render(); });
   }
   if (consentNext) {
     consentNext.addEventListener('click', () => navigate('skintype'));
@@ -1833,10 +2213,7 @@ function bindEvents() {
   });
   const skinNext = document.getElementById('skinNext');
   if (skinNext) {
-    skinNext.addEventListener('click', () => {
-      state.currentQuestion = 0;
-      navigate('questionnaire');
-    });
+    skinNext.addEventListener('click', () => { state.currentQuestion = 0; navigate('questionnaire'); });
   }
 
   // Questionnaire
@@ -1859,10 +2236,10 @@ function bindEvents() {
     });
   }
 
-  // Body map
-  document.querySelectorAll('.body-region-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      state.selectedRegion = btn.dataset.region;
+  // Body map SVG regions
+  document.querySelectorAll('.body-region-area[data-region]').forEach(el => {
+    el.addEventListener('click', () => {
+      state.selectedRegion = el.dataset.region;
       navigate('photoUpload');
     });
   });
